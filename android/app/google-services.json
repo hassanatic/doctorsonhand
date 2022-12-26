@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1012688143860",
+    "project_id": "doctors-on-hand-3b638",
+    "storage_bucket": "doctors-on-hand-3b638.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012688143860:android:ad867d2231fcf63fb865a1",
+        "android_client_info": {
+          "package_name": "com.vision.doctors_on_hand"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012688143860-a5adspnrk7te4v3t8tnlhbfam8eeibaq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcgdlgn8z8kYCqpWypX9RNPyFKZOIfJYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012688143860-a5adspnrk7te4v3t8tnlhbfam8eeibaq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
