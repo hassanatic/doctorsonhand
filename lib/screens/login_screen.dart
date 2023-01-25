@@ -36,11 +36,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 Image.asset('assets/images/app_icon.png',color: Colors.white, width: 200,height: 200,fit: BoxFit.fitWidth,),
-                verticalHeight(30),
+                verticalSpace(30),
                 reusableTextField("Enter Email", Icons.mail_outline, false, _emailTextController),
-                verticalHeight(20),
+                verticalSpace(20),
                 reusableTextField("Enter Password", Icons.lock_outline, true, _passwordTextController),
-                verticalHeight(20),
+                verticalSpace(20),
                 signInSignUpButton(context, true, (){}),
                 signUpOption(),
               ],
