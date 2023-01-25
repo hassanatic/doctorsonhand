@@ -59,20 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onSaved: (input) => _name = input!,
                           ),
                           const SizedBox(height: 20.0),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                                labelText: 'Email',
-                                labelStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                    const BorderSide(color: Colors.black))),
-                            validator: (input) => !input!.contains('@')
-                                ? 'Please enter a valid email'
-                                : null,
-                            onSaved: (input) => _email = input!,
-                          ),
+
                           const SizedBox(height: 20.0),
                           TextFormField(
                             decoration: const InputDecoration(
