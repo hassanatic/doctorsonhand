@@ -1,8 +1,9 @@
 import 'package:doctors_on_hand/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
-import 'package:doctors_on_hand/screens/welcome_screen.dart';
+import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:doctors_on_hand/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: WelcomeScreen(),
+        child: LoginScreen(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
