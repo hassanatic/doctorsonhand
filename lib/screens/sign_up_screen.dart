@@ -53,27 +53,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 verticalSpace(20),
                 reusableTextField("Enter Password", Icons.lock_outline, true, _passwordTextController),
                 verticalSpace(20),
-Row(
+Container(
+  child:   CupertinoPicker(
 
-  children: [
-    Text("You are signing as? "),
-        CupertinoPicker(
-      magnification: 1.22,
-      squeeze: 1.2,
-      useMagnifier: true,
-      scrollController: FixedExtentScrollController(initialItem: 1),
-      itemExtent: 30,
-      onSelectedItemChanged: (int selectedItem){
-      setState(() {
-        _selectedRole = selectedItem;
-      });
-    },
-      children: [
-        Text("doctor"),
-        Text("patient"),
-      ],
-    ),
-  ],
+        magnification: 1.22,
+
+        squeeze: 1.2,
+
+        useMagnifier: true,
+
+        scrollController: FixedExtentScrollController(initialItem: 1),
+
+        itemExtent: 30,
+
+        onSelectedItemChanged: (int selectedItem){
+
+        setState(() {
+
+  _selectedRole = selectedItem;
+
+        });
+
+      },
+
+        children: [
+
+  Text("doctor"),
+
+  Text("patient"),
+
+        ],
+
+      ),
 ),
 
                 verticalSpace(20),
