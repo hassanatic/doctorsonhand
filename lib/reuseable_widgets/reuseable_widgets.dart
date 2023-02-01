@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 TextField reusableTextField(String text, IconData icon, bool isPasswordType,
@@ -5,6 +6,7 @@ TextField reusableTextField(String text, IconData icon, bool isPasswordType,
   return TextField(
     controller: controller,
     obscureText: isPasswordType,
+
     enableSuggestions: !isPasswordType,
     autocorrect: !isPasswordType,
     cursorColor: Colors.white,

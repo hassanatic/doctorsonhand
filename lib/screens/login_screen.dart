@@ -1,4 +1,6 @@
 import 'package:doctors_on_hand/reuseable_widgets/reuseable_widgets.dart';
+import 'package:doctors_on_hand/screens/home_screen.dart';
+import 'package:doctors_on_hand/screens/map_screen.dart';
 import 'package:doctors_on_hand/utils/constants.dart';
 import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +43,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 verticalSpace(20),
                 reusableTextField("Enter Password", Icons.lock_outline, true, _passwordTextController),
                 verticalSpace(20),
-                signInSignUpButton(context, true, (){}),
+                signInSignUpButton(context, true, (){
+                  Navigator.push(context, 
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
+                }),
                 signUpOption(),
               ],
             ),
