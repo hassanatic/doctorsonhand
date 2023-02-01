@@ -1,3 +1,4 @@
+import 'package:doctors_on_hand/screens/map.dart';
 import 'package:doctors_on_hand/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: LoginScreen(),
+        child: MapPage(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,

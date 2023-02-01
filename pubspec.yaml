@@ -43,6 +43,9 @@ dependencies:
   latlong2: any
   flutter_map_marker_cluster: any
   google_nav_bar: ^5.0.6
+  dio: ^4.0.6
+  google_maps_flutter: ^2.2.3
+  flutter_polyline_points: ^1.0.0
 
 
 
