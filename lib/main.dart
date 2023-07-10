@@ -1,3 +1,7 @@
+import 'package:doctors_on_hand/screens/appointment.dart';
+import 'package:doctors_on_hand/screens/doctor_detail.dart';
+import 'package:doctors_on_hand/screens/home_screen.dart';
+import 'package:doctors_on_hand/screens/main_screen.dart';
 import 'package:doctors_on_hand/screens/map.dart';
 import 'package:doctors_on_hand/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +26,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: MapPage(),
+        child: MainScreen(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
