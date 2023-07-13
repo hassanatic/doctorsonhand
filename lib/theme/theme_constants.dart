@@ -16,7 +16,7 @@ const COLOR_ACCENT = Color(0xff7e5bed);
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
 
-   cupertinoOverrideTheme: CupertinoThemeData.raw(Brightness.dark, Colors.black, Colors.white,  textThemeData, Colors.black, Colors.black ),
+   cupertinoOverrideTheme: CupertinoThemeData.raw(Brightness.dark, Colors.black, Colors.white,  textThemeData, Colors.black, Colors.black ,true),
 
 
 );
@@ -47,7 +47,7 @@ ThemeData darkTheme = ThemeData(
       fontWeight: FontWeight.normal,
       color: Color(0xFF000000),
     ),
-    bodyText1: TextStyle(
+   bodyText1: TextStyle(
       fontSize: 14.0,
       fontWeight: FontWeight.normal,
       color: Color(0xFF000000),
@@ -67,7 +67,7 @@ ThemeData darkTheme = ThemeData(
 );
 
 
- TextTheme txtTheme = TextTheme(
+ TextTheme txtTheme = const TextTheme(
 
      headline1: TextStyle(
        fontSize: 24.0,
@@ -87,7 +87,7 @@ ThemeData darkTheme = ThemeData(
 
  );
 
- CupertinoTextThemeData textThemeData = CupertinoTextThemeData(
+ CupertinoTextThemeData textThemeData = const CupertinoTextThemeData(
   // primaryColor: Colors.white,
   // pickerTextStyle: TextStyle(color: Colors.white),
   // textStyle: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
