@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height / 2.9,
+            height: MediaQuery.of(context).size.height / 2.5,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Color.fromRGBO(81, 168, 255, 60),
