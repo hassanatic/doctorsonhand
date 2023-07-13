@@ -5,6 +5,7 @@ import 'package:doctors_on_hand/screens/home_screen.dart';
 import 'package:doctors_on_hand/screens/map.dart';
 import 'package:doctors_on_hand/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 
@@ -16,6 +17,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  @override
+  void initState() {
+SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(systemNavigationBarColor: Colors.black));
+    super.initState();
+  }
   int index = 0;
   final screens =[
     HomeScreen(),
@@ -27,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: screens[index],
       bottomNavigationBar: GNav(
@@ -36,10 +43,11 @@ class _MainScreenState extends State<MainScreen> {
         onTabChange: (index) => setState(() =>
         this.index = index
         ),
-tabBorderRadius: 30,
+
+tabBorderRadius: 50,
 tabMargin: EdgeInsets.all(5.0),
-        hoverColor: Colors.grey[100]!,
-        rippleColor: Colors.grey[300]!,
+        //hoverColor: Colors.grey[100]!,
+       // rippleColor: Colors.grey[300]!,
         color: Colors.grey,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         activeColor: Colors.white,
