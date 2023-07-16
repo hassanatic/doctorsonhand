@@ -35,7 +35,8 @@ SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(systemNavigationBarCol
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: screens[index],
+      body: SafeArea(child: screens[index]),
+      extendBody: true,
       bottomNavigationBar: GNav(
         tabBackgroundColor: Colors.grey[850]!,
         backgroundColor: Colors.black,

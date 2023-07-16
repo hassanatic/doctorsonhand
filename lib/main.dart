@@ -8,19 +8,35 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:doctors_on_hand/theme/theme_manager.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:doctors_on_hand/screens/sign_up_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+
+
+Future<String?> _getUserToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('userToken');
+}
 
 void main() async{
+
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  String? userToken = await _getUserToken();
+  runApp(MyApp(userToken: userToken,));
 }
+
 
 //List<MultiProvider> providers = [];
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final String? userToken;
+
+  MyApp({required this.userToken});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +45,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: LoginScreen(),
+        child: userToken == null ? LoginScreen() : MainScreen(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,

@@ -48,6 +48,7 @@ dependencies:
   flutter_polyline_points: ^1.0.0
   http: ^0.13.6
   persistent_bottom_nav_bar: ^5.0.2
+  shared_preferences: ^2.2.0
 
 
 

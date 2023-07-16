@@ -6,6 +6,7 @@ import 'package:doctors_on_hand/utils/constants.dart';
 import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/color_utils.dart';
 
@@ -18,7 +19,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  Future<void> _saveUserToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userToken', token);
+  }
 
+  Future<String?> _getUserToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userToken');
+  }
   void _signInWithEmailAndPassword() async {
     final email = _emailTextController.text.trim();
     final password = _passwordTextController.text;
@@ -28,6 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
         email: email,
         password: password,
       );
+
+      // Save the user token after successful authentication
+      String token = await userCredential.user!.getIdToken();
+      await _saveUserToken(token);
+
       // Authentication successful, navigate back to the chat screen
       Navigator.pushReplacement(
         context,

@@ -1,3 +1,4 @@
+import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -110,7 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const Divider(),
               Profile_Menu(title: 'Information', icon: Icons.medical_information,onPress: (){},),
-              Profile_Menu(title: 'Logout', icon: Icons.logout,onPress: (){}, textcolor: Colors.red,endicon: false,),
+              Profile_Menu(title: 'Logout', icon: Icons.logout,onPress: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginScreen()));
+              }, textcolor: Colors.red,endicon: false,),
             ],
           ),
         )

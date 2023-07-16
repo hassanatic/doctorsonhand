@@ -55,13 +55,27 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageComposer() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration.collapsed(hintText: 'Type your message...'),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _messageController,
+                decoration: InputDecoration(
+                  hintText: 'Type your message...',
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[300],
+                ),
+
+                onSubmitted: (_) => _sendMessage(),
+              ),
             ),
           ),
           IconButton(
@@ -109,9 +123,33 @@ class _ChatScreenState extends State<ChatScreen> {
                     final message = messageList?[index].data();
                     final content = message?['content'] as String?;
                     final sender = message?['sender'] as String?;
-                    return ListTile(
-                      title: Text(content ?? ''),
-                      subtitle: Text(sender ?? ''),
+
+                    // Determine if the message is sent by the current user or received from another user
+                    final isSentMessage = sender == FirebaseAuth.instance.currentUser?.email;
+                    print("$isSentMessage");
+
+                    // Determine the alignment for the ListTile based on the message sender
+                    final alignment = isSentMessage ? Alignment.centerRight : Alignment.centerLeft;
+
+
+                    return Align(
+                      alignment: isSentMessage ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        decoration: BoxDecoration(
+                          color: isSentMessage ? Colors.blueAccent : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(content ?? '', style: TextStyle(color: Colors.white)),
+                            SizedBox(height: 4),
+                            Text(sender ?? '', style: TextStyle(fontSize: 12.0)),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 );
