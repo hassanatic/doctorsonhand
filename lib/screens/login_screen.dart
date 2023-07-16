@@ -1,8 +1,10 @@
 import 'package:doctors_on_hand/reuseable_widgets/reuseable_widgets.dart';
 import 'package:doctors_on_hand/screens/home_screen.dart';
+import 'package:doctors_on_hand/screens/main_screen.dart';
 import 'package:doctors_on_hand/screens/map_screen.dart';
 import 'package:doctors_on_hand/utils/constants.dart';
 import 'package:doctors_on_hand/screens/sign_up_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/color_utils.dart';
@@ -15,6 +17,29 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+
+  void _signInWithEmailAndPassword() async {
+    final email = _emailTextController.text.trim();
+    final password = _passwordTextController.text;
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // Authentication successful, navigate back to the chat screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen()),
+      );
+    } catch (e) {
+      print('Error signing in: $e');
+      // Show a snackbar or an error dialog to inform the user about the login error
+    }
+  }
+
+
   TextEditingController _emailTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
   @override
@@ -44,8 +69,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 reusableTextField("Enter Password", Icons.lock_outline, true, _passwordTextController),
                 verticalSpace(20),
                 signInSignUpButton(context, true, (){
-                  Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => HomeScreen()));
+_signInWithEmailAndPassword();
+                  //
+                  // Navigator.push(context,
+                  // MaterialPageRoute(builder: (context) => HomeScreen()));
                 }),
                 signUpOption(),
               ],

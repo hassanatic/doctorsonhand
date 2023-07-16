@@ -1,9 +1,11 @@
 
 
-import 'package:doctors_on_hand/screens/appointment.dart';
+
 import 'package:doctors_on_hand/utils/color_utils.dart';
 import 'package:doctors_on_hand/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+
+import 'doctor_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

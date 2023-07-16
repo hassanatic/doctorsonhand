@@ -1,16 +1,19 @@
-import 'package:doctors_on_hand/screens/appointment.dart';
+import 'package:doctors_on_hand/screens/doctor_detail_screen.dart';
 import 'package:doctors_on_hand/screens/doctor_detail.dart';
 import 'package:doctors_on_hand/screens/home_screen.dart';
 import 'package:doctors_on_hand/screens/main_screen.dart';
 import 'package:doctors_on_hand/screens/map.dart';
 import 'package:doctors_on_hand/theme/theme_constants.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:doctors_on_hand/theme/theme_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: MainScreen(),
+        child: LoginScreen(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,

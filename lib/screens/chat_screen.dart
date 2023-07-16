@@ -1,49 +1,127 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-//import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+
+class ChatMessage {
+  final String sender;
+  final String content;
+  final Timestamp timestamp;
+
+  ChatMessage({
+    required this.sender,
+    required this.content,
+    required this.timestamp,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sender': sender,
+      'content': content,
+      'timestamp': timestamp,
+    };
+  }
+}
+
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
-
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  // List<types.Message> _messages = [];
-  // final _user = const types.User(
-  //   id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
-  // );
 
+  TextEditingController _messageController = TextEditingController();
+
+  void _sendMessage() async {
+    final content = _messageController.text.trim();
+    _messageController.text = '';
+    if (content.isEmpty) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('User not authenticated');
+      return;
+    }
+    final message = ChatMessage(
+      sender: user!.email!,
+      content: content,
+      timestamp: Timestamp.now(),
+    );
+
+    await FirebaseFirestore.instance.collection('messages').add(message.toJson());
+
+
+  }
+
+  Widget _buildMessageComposer() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration.collapsed(hintText: 'Type your message...'),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.send),
+            onPressed: _sendMessage,
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // body: Chat(
-        //     messages: _messages, onSendPressed: _handleSendPressed, user: _user)
+      appBar: AppBar(
+        title: Text('Chat Screen'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('messages')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                }
+
+                final messages = snapshot.data?.docs;
+                final messageList = messages as List<DocumentSnapshot<Map<String, dynamic>>>?;
+                return ListView.builder(
+                  reverse: true,
+                  itemCount: messageList?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final message = messageList?[index].data();
+                    final content = message?['content'] as String?;
+                    final sender = message?['sender'] as String?;
+                    return ListTile(
+                      title: Text(content ?? ''),
+                      subtitle: Text(sender ?? ''),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          _buildMessageComposer(),
+        ],
+      ),
     );
   }
-
-
-  // void _addMessage(types.Message message) {
-  //   setState(() {
-  //     _messages.insert(0, message);
-  //   });
-  // }
-  //
-  // void _handleSendPressed(types.PartialText message) {
-  //   final textMessage = types.TextMessage(
-  //     author: _user,
-  //     createdAt: DateTime.now().millisecondsSinceEpoch,
-  //     id: const Uuid().v4(),
-  //     text: message.text,
-  //   );
-  //
-  //   _addMessage(textMessage);
-  // }
-
-
-
-
 
 }

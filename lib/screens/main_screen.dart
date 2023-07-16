@@ -1,4 +1,4 @@
-import 'package:doctors_on_hand/screens/appointment.dart';
+import 'package:doctors_on_hand/screens/doctor_detail_screen.dart';
 import 'package:doctors_on_hand/screens/chat_screen.dart';
 import 'package:doctors_on_hand/screens/doctor_detail.dart';
 import 'package:doctors_on_hand/screens/home_screen.dart';
