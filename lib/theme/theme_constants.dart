@@ -16,7 +16,7 @@ const COLOR_ACCENT = Color(0xff7e5bed);
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
 
-   cupertinoOverrideTheme: CupertinoThemeData.raw(Brightness.dark, Colors.black, Colors.white,  textThemeData, Colors.black, Colors.black ),
+   cupertinoOverrideTheme: CupertinoThemeData.raw(Brightness.dark, Colors.black, Colors.white,  textThemeData, Colors.black, Colors.black , true),
 
 
 );

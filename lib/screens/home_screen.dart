@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String username = "Abdul";
   List<Widget> doctors_list = [
     DoctorsCard(
-      doctorName: "Abdul rehman",
+      doctorName: "An",
       speciality: "gynocologist",
       profileImage: AssetImage("assets/images/person.jpeg"),
       onPressed: (context){

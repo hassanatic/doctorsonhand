@@ -1,6 +1,8 @@
 import 'package:doctors_on_hand/screens/doctor_detail_screen.dart';
 import 'package:doctors_on_hand/screens/doctor_detail.dart';
+//import 'package:doctors_on_hand/screens/dr_homescreen.dart';
 import 'package:doctors_on_hand/screens/home_screen.dart';
+import 'package:doctors_on_hand/screens/dr_homescreen.dart.dart';
 import 'package:doctors_on_hand/screens/main_screen.dart';
 import 'package:doctors_on_hand/screens/map.dart';
 import 'package:doctors_on_hand/theme/theme_constants.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: userToken == null ? LoginScreen() : MainScreen(),
+        child: userToken == null ? LoginScreen() : drhomescreen(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
