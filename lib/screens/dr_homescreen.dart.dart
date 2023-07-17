@@ -1,11 +1,14 @@
+import 'package:doctors_on_hand/models/appointmentdata.dart';
 import 'package:flutter/material.dart';
 
-class drhomescreen extends StatefulWidget {
+class DrHomeScreen extends StatefulWidget {
+  const DrHomeScreen({Key? key}) : super(key: key);
+
   @override
-  State<drhomescreen> createState() => _drhomescreenState();
+  State<DrHomeScreen> createState() => _DrHomeScreenState();
 }
 
-class _drhomescreenState extends State<drhomescreen> {
+class _DrHomeScreenState extends State<DrHomeScreen> {
   String patientName = '';
   late List<DataRow> dataRows;
   late List<DataRow> originalDataRows;
@@ -13,73 +16,20 @@ class _drhomescreenState extends State<drhomescreen> {
   @override
   void initState() {
     super.initState();
-    dataRows = [
-      DataRow(
-        cells: [
-          DataCell(Text('John Doe')),
-          DataCell(Text('09:00 AM')),
-          DataCell(Text('Check-up')),
-          DataCell(Icon(Icons.check, color: Colors.green)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('John Doe')),
-          DataCell(Text('09:00 AM')),
-          DataCell(Text('Check-up')),
-          DataCell(Icon(Icons.check, color: Colors.green)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('John Doe')),
-          DataCell(Text('09:00 AM')),
-          DataCell(Text('Check-up')),
-          DataCell(Icon(Icons.check, color: Colors.green)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('John Doe')),
-          DataCell(Text('09:00 AM')),
-          DataCell(Text('Check-up')),
-          DataCell(Icon(Icons.check, color: Colors.green)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('Jane Smith')),
-          DataCell(Text('10:30 AM')),
-          DataCell(Text('Follow-up')),
-          DataCell(Icon(Icons.access_time, color: Colors.orange)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('Jane Smith')),
-          DataCell(Text('10:30 AM')),
-          DataCell(Text('Follow-up')),
-          DataCell(Icon(Icons.access_time, color: Colors.orange)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('Jane Smith')),
-          DataCell(Text('10:30 AM')),
-          DataCell(Text('Follow-up')),
-          DataCell(Icon(Icons.access_time, color: Colors.orange)),
-        ],
-      ),
-      DataRow(
-        cells: [
-          DataCell(Text('Jane Smith')),
-          DataCell(Text('10:30 AM')),
-          DataCell(Text('Follow-up')),
-          DataCell(Icon(Icons.access_time, color: Colors.orange)),
-        ],
-      ),
-      // Add more rows here
-    ];
+    dataRows = appointmentList.map((Appointment) {
+        return DataRow(
+          cells: [
+            DataCell(Text(Appointment.patientName)),
+            DataCell(Text(Appointment.time)),
+            DataCell(Text(Appointment.reason)),
+            DataCell(Icon(Appointment.statusIcon, color: Appointment.statusColor)),
+          ],
+        );
+      }).toList();
+
+
+
+
 
     originalDataRows = List.from(dataRows);
   }
@@ -111,8 +61,9 @@ class _drhomescreenState extends State<drhomescreen> {
 class DoctorPage extends StatelessWidget {
   final List<DataRow> dataRows;
   final Function(String) updateDataRows;
+  final FocusNode focusNode = FocusNode();
 
-  const DoctorPage({Key? key, required this.dataRows, required this.updateDataRows}) : super(key: key);
+  DoctorPage({Key? key, required this.dataRows, required this.updateDataRows}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +72,7 @@ class DoctorPage extends StatelessWidget {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
+
 
 
         appBar: AppBar(
@@ -182,21 +134,21 @@ class DoctorPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40),
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
+                              child:  Padding(
+                                padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Today\'s Appointments',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    SizedBox(height: 8.0),
+                                    const SizedBox(height: 8.0),
                                     Text(
-                                      '8',
-                                      style: TextStyle(
+                                      appointmentList.length.toString(),
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 24.0,
                                         fontWeight: FontWeight.bold,
@@ -214,12 +166,12 @@ class DoctorPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(40),
                               ),
-                              child: Padding(
+                              child: const Padding(
                                 padding: EdgeInsets.all(16.0),
                                 child: Column(
                                   children: [
                                     Text(
-                                      'Pending Requests',
+                                      'Remaining Appointments',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -259,15 +211,21 @@ class DoctorPage extends StatelessWidget {
                       ),
                       child: Center(
                         child: Padding(
-                          padding: EdgeInsets.only(left: 24, right: 24),
+                          padding: const EdgeInsets.only(left: 24, right: 24),
                           child: TextField(
+                            scrollPadding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).viewInsets.bottom
+
+                            ),
+
                             onChanged: (value) {
-                              final drHomeScreenState = context.findAncestorStateOfType<_drhomescreenState>();
+                              final drHomeScreenState = context.findAncestorStateOfType<_DrHomeScreenState>();
                               if (drHomeScreenState != null) {
                                 drHomeScreenState.updateDataRows(value);
                               }
                             },
-                            decoration: InputDecoration.collapsed(
+                            decoration: const InputDecoration.collapsed(
+
                               hintText: "Search",
                               hintStyle: TextStyle(
                                 fontFamily: 'Poppins',
@@ -283,34 +241,42 @@ class DoctorPage extends StatelessWidget {
                 ),
               ),
 
-             SizedBox(height: 20),
-              Container(
-                child: Column(
-                  children: [
-                    const Text(
+             const SizedBox(height: 20),
+              Column(
+                children: [
+                  const Text(
 
-                      'Appointment List',
-                      style: TextStyle(
+                    'Appointment List',
+                    style: TextStyle(
 
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade200,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: DataTable(
+                          columns: const [
+                            DataColumn(label: Text('Patient Name')),
+                            DataColumn(label: Text('Time')),
+                            DataColumn(label: Text('Reason')),
+                            DataColumn(label: Text('Status')),
+
+                          ],
+                          rows: dataRows,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 16.0),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Patient Name')),
-                          DataColumn(label: Text('Time')),
-                          DataColumn(label: Text('Reason')),
-                          DataColumn(label: Text('Status')),
-                        ],
-                        rows: dataRows,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               )
             ],
           ),

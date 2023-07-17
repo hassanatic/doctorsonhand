@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: userToken == null ? LoginScreen() : drhomescreen(),
+        child: userToken == null ? LoginScreen() : DrHomeScreen(),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
