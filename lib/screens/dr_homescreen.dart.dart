@@ -1,4 +1,4 @@
-import 'package:doctors_on_hand/models/appointmentdata.dart';
+import 'package:doctors_on_hand/models/AppointmentData.dart';
 import 'package:flutter/material.dart';
 
 class DrHomeScreen extends StatefulWidget {
@@ -21,8 +21,8 @@ class _DrHomeScreenState extends State<DrHomeScreen> {
           cells: [
             DataCell(Text(Appointment.patientName)),
             DataCell(Text(Appointment.time)),
-            DataCell(Text(Appointment.reason)),
-            DataCell(Icon(Appointment.statusIcon, color: Appointment.statusColor)),
+            //DataCell(IconButton(icon: const Icon(Icons.edit),onPressed: (){},))
+           
           ],
         );
       }).toList();
@@ -94,6 +94,7 @@ class DoctorPage extends StatelessWidget {
           ],
         ),
         body: SingleChildScrollView(
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -254,11 +255,11 @@ class DoctorPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
                       child: Container(
+                        width: MediaQuery.of(context).size.width*0.9,
                         decoration: BoxDecoration(
                           color: Colors.green.shade200,
                           borderRadius: BorderRadius.circular(10),
@@ -267,8 +268,8 @@ class DoctorPage extends StatelessWidget {
                           columns: const [
                             DataColumn(label: Text('Patient Name')),
                             DataColumn(label: Text('Time')),
-                            DataColumn(label: Text('Reason')),
-                            DataColumn(label: Text('Status')),
+                            //DataColumn(label: Text('Edit')),
+
 
                           ],
                           rows: dataRows,

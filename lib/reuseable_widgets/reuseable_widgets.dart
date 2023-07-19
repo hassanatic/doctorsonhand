@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 TextField reusableTextField(String text, IconData icon, bool isPasswordType,
     TextEditingController controller) {
   return TextField(
+    scrollPadding: const EdgeInsets.only(bottom: 220),
     controller: controller,
     obscureText: isPasswordType,
 
