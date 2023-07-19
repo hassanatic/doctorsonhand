@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
 
 import '../utils/color_utils.dart';
 import 'main_screen.dart';
+
+Set<Marker> markers = Set<Marker>();
 
 class SplashScreen extends StatefulWidget {
   final String? userToken;
@@ -15,6 +21,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late GoogleMapController mapController;
+
+  late String lat;
+  late String long;
+
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -57,6 +68,36 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
+  void _fetchHospitals() async {
+    // Make an HTTP request to the Google Places API
+    final response = await http.get(Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$long&radius=5000&type=hospital&key=AIzaSyD1EfwwENHXTYcGNyibN8PJEOSDrb3lRew'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Extract the hospital data from the API response
+      final List<dynamic> results = data['results'];
+
+      setState(() {
+        markers = results.map((result) {
+          final location = result['geometry']['location'];
+          final lat = location['lat'];
+          final lng = location['lng'];
+          final name = result['name'];
+
+          return Marker(
+            markerId: MarkerId(name),
+            position: LatLng(lat, lng),
+            infoWindow: InfoWindow(title: name),
+          );
+        }).toSet();
+
+        print(markers);
+      });
+    }
+  }
+
   void getLocton() async {
     await Geolocator.requestPermission();
   }
@@ -68,9 +109,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     getLocton();
 
-    _getCurrentLocation().then((Position position) {
+    _getCurrentLocation().then((Position position) async {
       // Use the retrieved position as needed
       print('Latitude: ${position.latitude}');
+
+      lat = position.latitude.toString();
+      long = position.longitude.toString();
       print('Longitude: ${position.longitude}');
 
       // Navigate to the next screen or perform acny other actions
@@ -94,6 +138,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 widget.userToken == null ? LoginScreen() : MainScreen()),
       );
     });
+
+    _fetchHospitals();
   }
 
   Widget build(BuildContext context) {
