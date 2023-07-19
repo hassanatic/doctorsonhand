@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/apis/apis.dart';
 import 'package:doctors_on_hand/reuseable_widgets/reuseable_widgets.dart';
+import 'package:doctors_on_hand/screens/doctor_main_screen.dart';
 import 'package:doctors_on_hand/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,9 +30,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (user != null) {
         await user.updateDisplayName(name);
       }
+      String userId = userCredential.user!.uid; // Get the user's unique ID
+      await FirebaseFirestore.instance
+          .collection('all_users')
+          .doc(userId)
+          .set({'role': _selectedRole});
+
+
+
 
       String token = await userCredential.user!.getIdToken();
       await APIs.saveUserToken(token);
+      await APIs.saveUserRole(_selectedRole);
 
       print(_nameTextController.text);
 
@@ -58,6 +69,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+
+  Future<void> signUpDoc(String email, String password, String name, ) async {
+    try {
+      UserCredential userCredential =
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // Signup successful
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await user.updateDisplayName(name);
+      }
+      String userId = userCredential.user!.uid; // Get the user's unique ID
+      await FirebaseFirestore.instance
+          .collection('all_users')
+          .doc(userId)
+          .set({'role': _selectedRole});
+
+
+
+
+      String token = await userCredential.user!.getIdToken();
+      await APIs.saveUserToken(token);
+      await APIs.saveUserRole(_selectedRole);
+
+      print(_nameTextController.text);
+
+      if (await APIs.doctorExists()) {
+        print("true");
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => DoctorMainScreen()));
+      } else {
+        print("false");
+        (await APIs.createDoctor(_nameTextController.text,_specialityTextController.text, double.parse(_idTextController.text),_licenceTextController.text).then((value) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => DoctorMainScreen()));
+        }));
+      }
+
+      print('Signup successful: ${userCredential.user!.email}');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   List _roles = ["doctor", "patient"];
   int _selectedRole = 0;
   TextEditingController _nameTextController = new TextEditingController();
@@ -65,6 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _passwordTextController = new TextEditingController();
   TextEditingController _licenceTextController = new TextEditingController();
   TextEditingController _idTextController = new TextEditingController();
+  TextEditingController _specialityTextController = new TextEditingController();
 
   @override
   void dispose() {
@@ -73,6 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _nameTextController.dispose();
     _emailTextController.dispose();
     _passwordTextController.dispose();
+    _specialityTextController.dispose();
     super.dispose();
   }
 
@@ -171,6 +237,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           verticalSpace(20),
                           reusableTextField("Enter ID Card Number",
                               Icons.credit_card, false, _idTextController),
+                          verticalSpace(20),
+                          reusableTextField("Your Speciality",
+                              Icons.medical_services, false, _specialityTextController),
                         ],
                       )),
                   verticalSpace(20),
@@ -180,6 +249,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           _emailTextController.text,
                           _passwordTextController.text,
                           _nameTextController.text);
+                    }
+                    else{
+                      signUpDoc( _emailTextController.text,    _passwordTextController.text, _nameTextController.text,);
                     }
                   }),
                 ],

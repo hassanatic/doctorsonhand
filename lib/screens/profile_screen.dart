@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:doctors_on_hand/apis/apis.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
@@ -16,77 +17,67 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   // Function to upload image to Firebase Storage
-  Future<String?> uploadImageToFirebase() async {
-    final user = FirebaseAuth.instance.currentUser;
-    final picker = ImagePicker();
+ String picName = "";
+ String imageUrl = '';
 
-    // Pick an image from the gallery
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
-      // Create a reference to the user's profile image in Firebase Storage
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('profile_images/${user!.uid}.jpg');
-
-      // Upload the image file to Firebase Storage
-      final uploadTask = storageRef.putFile(File(pickedImage.path));
-
-      // Get the download URL of the uploaded image
-      final snapshot = await uploadTask.whenComplete(() {});
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-
-      // Return the download URL
-      return downloadUrl;
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
     }
 
-    return null;
+    _uploadImage();
   }
 
-  final picker = ImagePicker();
-
-  Future<File?> pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      return File(pickedFile.path);
+  Future<void> _uploadImage() async {
+    if (_selectedImage == null) {
+      return;
     }
 
-    return null;
-  }
-
-  Future<String?> uploadImage(File imageFile) async {
     try {
-      final storage = FirebaseStorage.instance;
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final Reference reference =
-          storage.ref().child('profile_pictures/$fileName');
-      final UploadTask uploadTask = reference.putFile(imageFile);
-      final TaskSnapshot storageTaskSnapshot =
-          await uploadTask.whenComplete(() => null);
-      final String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
-      return downloadUrl;
+      picName = fileName;
+      setState(() async{
+
+imageUrl = await getImageUrl();
+
+      });
+print(picName);
+      print(imageUrl);
+
+      final reference = FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child('$fileName.jpg');
+
+      await reference.putFile(_selectedImage!);
+      print('Image uploaded successfully.');
     } catch (e) {
       print('Error uploading image: $e');
-      return null;
     }
   }
 
-  late File _imageFile;
 
-  Future<void> _selectAndUploadImage() async {
-    final pickedImage = await pickImage();
-    if (pickedImage != null) {
-      setState(() {
-        _imageFile = pickedImage;
-      });
 
-      final downloadUrl = await uploadImage(_imageFile);
-      if (downloadUrl != null) {
-        // Save the download URL to the user's profile or database
-        // e.g., Firestore, Realtime Database, etc.
-        // Your code here...
-      }
+  Future<String> getImageUrl() async {
+    final storageReference = FirebaseStorage.instance
+        .ref()
+        .child('images')
+        .child('${picName}');
+
+    try {
+      final imageUrl = await storageReference.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      // Handle error, e.g., if the image doesn't exist in Firebase Storage
+      print('Error getting image URL: $e');
+      return '';
     }
   }
 
@@ -104,6 +95,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+
+  
   @override
   String? username = APIs.auth.currentUser?.displayName;
   String? email = APIs.auth.currentUser?.email;
@@ -127,16 +120,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    _selectAndUploadImage();
+                    _pickImage();
                   },
-                  child: const Stack(children: [
+                  child: Stack(children: [
                     SizedBox(
                       height: 120,
                       width: 120,
                       child: CircleAvatar(
+
+
                         radius: 100,
-                        backgroundImage:
-                            AssetImage('assets/images/doctor1.png'),
+                        backgroundImage: imageUrl != '' ? Image.network('${imageUrl}.jpg').image : AssetImage("assets/images/person.jpeg"),
                       ),
                     ),
                     Positioned(
@@ -197,13 +191,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
           child: Column(
             children: [
-              Profile_Menu(
-                  title: 'Settings', icon: Icons.settings, onPress: () {}),
-              Profile_Menu(
-                title: 'History',
-                icon: Icons.history,
-                onPress: () {},
-              ),
+
+
               Profile_Menu(
                 title: 'Location',
                 icon: Icons.location_city,

@@ -6,12 +6,12 @@ class DoctorModel {
   String speciality;
   String name;
   String bio;
-  int cnic;
+  double cnic;
   String id;
   String pushToken;
   String email;
   List<String> otherSpecialities;
-  int regCode;
+  String regCode;
   String image;
 
   DoctorModel({

@@ -21,13 +21,35 @@ class APIs {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
+  Future<int> getUserRole() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    DocumentSnapshot snapshot =
+    await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (snapshot.exists) {
+      // The user document exists, so return the role
+      return snapshot.get('role');
+    } else {
+      // Handle the case if the user document doesn't exist or the role field is not set
+      // You can return a default role or an error, depending on your app's logic
+      return 1;
+    }
+  }
+
+ static Future<void> saveUserRole(int role)async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('role', role);
+
+
+}
   static Future<void> saveUserToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userToken', token);
   }
 
   // for creating a new user
-  static Future<void> createDoctor() async {
+  static Future<void> createDoctor(String name, String speciality, double cnic, String regCode) async {
     final docChatUser = DoctorModel(
         id: user.uid,
         name: user.displayName.toString(),
@@ -38,10 +60,10 @@ class APIs {
         // isOnline: false,
         // lastActive: time,
         pushToken: '',
-        speciality: 'gyno',
-        cnic: 3420359895771,
-        otherSpecialities: ["dentist", "heart surgeon"],
-        regCode: 4578);
+        speciality: speciality,
+        cnic: cnic,
+        otherSpecialities: [],
+        regCode: regCode);
 
     return await firestore
         .collection('doctors')

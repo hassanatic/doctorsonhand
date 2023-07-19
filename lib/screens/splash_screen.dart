@@ -1,20 +1,24 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import '../utils/color_utils.dart';
+import 'doctor_main_screen.dart';
 import 'main_screen.dart';
 
 Set<Marker> markers = Set<Marker>();
 
 class SplashScreen extends StatefulWidget {
   final String? userToken;
+  final int? role;
 
-  const SplashScreen({super.key, required this.userToken});
+  const SplashScreen({super.key, required this.userToken, required this.role});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -23,8 +27,24 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   late GoogleMapController mapController;
 
-  late String lat;
-  late String long;
+
+
+
+  Future<int> getUserRole() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    DocumentSnapshot snapshot =
+    await FirebaseFirestore.instance.collection('all_users').doc(userId).get();
+
+    if (snapshot.exists) {
+      // The user document exists, so return the role
+      return snapshot.get('role');
+    } else {
+      // Handle the case if the user document doesn't exist or the role field is not set
+      // You can return a default role or an error, depending on your app's logic
+      return 1;
+    }
+  }
 
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled;
@@ -51,27 +71,13 @@ class _SplashScreenState extends State<SplashScreen> {
     return await Geolocator.getCurrentPosition();
   }
 
-  late Position _currentPosition;
 
-  void _getLocation() {
-    _getCurrentLocation().then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
 
-      // Use the retrieved position as needed
-      print('Latitude: ${position.latitude}');
-      print('Longitude: ${position.longitude}');
-    }).catchError((e) {
-      // Handle any errors that occur during location retrieval
-      print('Error getting location: $e');
-    });
-  }
 
   void _fetchHospitals() async {
     // Make an HTTP request to the Google Places API
     final response = await http.get(Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$long&radius=5000&type=hospital&key=AIzaSyD1EfwwENHXTYcGNyibN8PJEOSDrb3lRew'));
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=25.1564,20.456&radius=5000&type=hospital&key=AIzaSyD1EfwwENHXTYcGNyibN8PJEOSDrb3lRew'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -107,14 +113,13 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
 
-    getLocton();
+     getLocton();
 
     _getCurrentLocation().then((Position position) async {
       // Use the retrieved position as needed
       print('Latitude: ${position.latitude}');
 
-      lat = position.latitude.toString();
-      long = position.longitude.toString();
+
       print('Longitude: ${position.longitude}');
 
       // Navigate to the next screen or perform acny other actions
@@ -123,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                widget.userToken == null ? LoginScreen() : MainScreen()),
+                widget.userToken == null ? LoginScreen() : widget.role == 0 ? MainScreen() : DoctorMainScreen()),
       );
     }).catchError((e) {
       // Handle any errors that occur during location retrieval
@@ -135,11 +140,11 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                widget.userToken == null ? LoginScreen() : MainScreen()),
+                widget.userToken == null ? LoginScreen() :  widget.role == 0 ? MainScreen() : DoctorMainScreen()),
       );
     });
 
-    _fetchHospitals();
+   // _fetchHospitals();
   }
 
   Widget build(BuildContext context) {

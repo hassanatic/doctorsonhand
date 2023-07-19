@@ -1,32 +1,50 @@
+import 'package:doctors_on_hand/screens/doctor_detail_screen.dart';
+import 'package:doctors_on_hand/screens/doctor_detail.dart';
+import 'package:doctors_on_hand/screens/home_screen.dart';
+import 'package:doctors_on_hand/screens/main_screen.dart';
+import 'package:doctors_on_hand/screens/map.dart';
 import 'package:doctors_on_hand/screens/splash_screen.dart';
 import 'package:doctors_on_hand/theme/theme_constants.dart';
-import 'package:doctors_on_hand/theme/theme_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:doctors_on_hand/screens/login_screen.dart';
+import 'package:doctors_on_hand/theme/theme_manager.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 Future<String?> _getUserToken() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('userToken');
 }
 
-void main() async {
+Future<int?> _getRole() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('role');
+}
+
+void main() async{
+
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
   String? userToken = await _getUserToken();
-  runApp(MyApp(
-    userToken: userToken,
-  ));
+  int? role = await _getRole();
+  runApp(MyApp(userToken: userToken, role: role,));
 }
+
 
 //List<MultiProvider> providers = [];
 
 class MyApp extends StatelessWidget {
   final String? userToken;
+  final int? role;
 
-  MyApp({required this.userToken});
+  MyApp({required this.userToken, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +53,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeManager()),
       ],
       child: Consumer<ThemeManager>(
-        child: SplashScreen(
-          userToken: userToken,
-        ),
+        child: SplashScreen(userToken: userToken,role : role),
         builder: (c, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
