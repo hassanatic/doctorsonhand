@@ -89,75 +89,77 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Chat Screen'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('messages')
-                  .orderBy('timestamp', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                }
-
-                final messages = snapshot.data?.docs;
-                final messageList = messages as List<DocumentSnapshot<Map<String, dynamic>>>?;
-                return ListView.builder(
-                  reverse: true,
-                  itemCount: messageList?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    final message = messageList?[index].data();
-                    final content = message?['content'] as String?;
-                    final sender = message?['sender'] as String?;
-
-                    // Determine if the message is sent by the current user or received from another user
-                    final isSentMessage = sender == FirebaseAuth.instance.currentUser?.email;
-                    print("$isSentMessage");
-
-                    // Determine the alignment for the ListTile based on the message sender
-                    final alignment = isSentMessage ? Alignment.centerRight : Alignment.centerLeft;
-
-
-                    return Align(
-                      alignment: isSentMessage ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          color: isSentMessage ? Colors.blueAccent : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(content ?? '', style: TextStyle(color: Colors.white)),
-                            SizedBox(height: 4),
-                            Text(sender ?? '', style: TextStyle(fontSize: 12.0)),
-                          ],
-                        ),
-                      ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Chat Screen'),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('messages')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                );
-              },
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  }
+
+                  final messages = snapshot.data?.docs;
+                  final messageList = messages as List<DocumentSnapshot<Map<String, dynamic>>>?;
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: messageList?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final message = messageList?[index].data();
+                      final content = message?['content'] as String?;
+                      final sender = message?['sender'] as String?;
+
+                      // Determine if the message is sent by the current user or received from another user
+                      final isSentMessage = sender == FirebaseAuth.instance.currentUser?.email;
+                      print("$isSentMessage");
+
+                      // Determine the alignment for the ListTile based on the message sender
+                      final alignment = isSentMessage ? Alignment.centerRight : Alignment.centerLeft;
+
+
+                      return Align(
+                        alignment: isSentMessage ? Alignment.centerRight : Alignment.centerLeft,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          decoration: BoxDecoration(
+                            color: isSentMessage ? Colors.blueAccent : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(content ?? '', style: TextStyle(color: Colors.white)),
+                              SizedBox(height: 4),
+                              Text(sender ?? '', style: TextStyle(fontSize: 12.0)),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-          _buildMessageComposer(),
-        ],
+            _buildMessageComposer(),
+          ],
+        ),
       ),
     );
   }

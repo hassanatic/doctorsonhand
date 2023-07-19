@@ -34,7 +34,7 @@ late String timeSlot;
   @override
   void initState() {
     // TODO: implement initState
-    selectedDate = DateTime.now().add(Duration(days: 1)); // Start from tomorrow
+    selectedDate = DateTime.now().add(const Duration(days: 1)); // Start from tomorrow
     timeSlots = generateTimeSlots();
     super.initState();
   }
@@ -63,8 +63,8 @@ late String timeSlot;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime.now().add(Duration(days: 1)),
-      lastDate: DateTime.now().add(Duration(days: 7)),
+      firstDate: DateTime.now().add(const Duration(days: 1)),
+      lastDate: DateTime.now().add(const Duration(days: 7)),
     );
 
     if (picked != null && picked != selectedDate) {
@@ -81,7 +81,7 @@ late String timeSlot;
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Appointment Confirmation'),
+          title: const Text('Appointment Confirmation'),
           content: Text(
             'Your appointment with ${widget.doctorName} on ${DateFormat('MMM d, yyyy').format(selectedDate)} at $timeSlot has been booked.',
           ),
@@ -90,7 +90,7 @@ late String timeSlot;
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -103,11 +103,12 @@ late String timeSlot;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctors Details'),
+        title: const Text('Doctors Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -123,36 +124,36 @@ late String timeSlot;
                     ),
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       widget.doctorName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       widget.speciality,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16.0,
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.star,
                           color: Colors.yellow,
                           size: 20.0,
                         ),
-                        SizedBox(width: 4.0),
+                        const SizedBox(width: 4.0),
                         Text(
                           widget.ratings.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -163,28 +164,28 @@ late String timeSlot;
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'Bio:',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               widget.bio,
-              style: TextStyle(fontSize: 16.0),
+              style: const TextStyle(fontSize: 16.0),
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'Other Specialities:',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Container(
               height: 60.0,
               child: ListView.builder(
@@ -208,35 +209,35 @@ late String timeSlot;
                 },
               ),
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 16.0),
+            const Text(
               'Select Appointment Date:',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
 
             Center(
               child: TextButton(
                 onPressed: () => _selectDate(context),
                 child: Text(
                   '${DateFormat('MMM d, yyyy').format(selectedDate)}',
-                  style: TextStyle(fontSize: 18.0),
+                  style: const TextStyle(fontSize: 18.0),
                 ),
               ),
             ),
 
-            SizedBox(height: 24.0),
-            Text(
+            const SizedBox(height: 24.0),
+            const Text(
               'Select Appointment Time:',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
 
             Container(
               height: 60.0,
@@ -255,7 +256,7 @@ late String timeSlot;
                         });
                       },
                       child: Card(
-                        color: selectedSlotIndex == index ? Color.fromRGBO(81, 168, 255, 60) : null, // Change color if selected
+                        color: selectedSlotIndex == index ? const Color.fromRGBO(81, 168, 255, 60) : null, // Change color if selected
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -272,32 +273,33 @@ late String timeSlot;
                 },
               ),
             ),
-            SizedBox(height: 35.0),
-            ElevatedButton(
+            const SizedBox(height: 35.0),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: ElevatedButton(
 
 
-onPressed: (){
+                  onPressed: (){
 
-  _selectTimeSlot(timeSlot);
-},
-                style: ElevatedButton.styleFrom(
-backgroundColor: Color.fromRGBO(81, 168, 255, 60),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  )
-                ),
+                  _selectTimeSlot(timeSlot);
+                       },
+                  style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(81, 168, 255, 60),
+                    shape: const StadiumBorder(),
+                  ),
 
 
 
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 18,bottom: 18),
-                  child: Center(child: Text('Book Appointment',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),),
-                ))
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 18,bottom: 18),
+                    child: Center(child: Text('Book Appointment',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),),
+                  )),
+            )
           ],
         ),
       ),
