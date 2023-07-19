@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:doctors_on_hand/screens/sign_up_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +13,8 @@ import 'doctor_main_screen.dart';
 import 'main_screen.dart';
 
 Set<Marker> markers = Set<Marker>();
+double lat=0;
+double long = 0;
 
 class SplashScreen extends StatefulWidget {
   final String? userToken;
@@ -28,6 +30,8 @@ class _SplashScreenState extends State<SplashScreen> {
   late GoogleMapController mapController;
 
 
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late CollectionReference _markersRef;
 
 
   Future<int> getUserRole() async {
@@ -70,7 +74,24 @@ class _SplashScreenState extends State<SplashScreen> {
     // Get the current position
     return await Geolocator.getCurrentPosition();
   }
+  void _loadMarkersFromFirestore() {
+    _markersRef.get().then((querySnapshot) {
+      querySnapshot.docs.forEach((documentSnapshot) {
+        double latitude = documentSnapshot['latitude'];
+        double longitude = documentSnapshot['longitude'];
+        LatLng latLng = LatLng(latitude, longitude);
 
+        setState(() {
+          markers.add(
+            Marker(
+              markerId: MarkerId(latLng.toString()),
+              position: latLng,
+            ),
+          );
+        });
+      });
+    });
+  }
 
 
 
@@ -114,13 +135,18 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
      getLocton();
-
+    _markersRef = _firestore.collection('markers');
+    _loadMarkersFromFirestore();
     _getCurrentLocation().then((Position position) async {
       // Use the retrieved position as needed
       print('Latitude: ${position.latitude}');
 
-
+lat = position.latitude;
+long = position.longitude;
       print('Longitude: ${position.longitude}');
+
+
+      _loadMarkersFromFirestore();
 
       // Navigate to the next screen or perform acny other actions
       // e.g., redirect to the home screen

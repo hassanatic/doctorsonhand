@@ -23,8 +23,9 @@ class _DoctorMainScreenState extends State<DoctorMainScreen> {
   int index = 0;
   final screens =[
     DrHomeScreen(),
+
+    ProfileScreen(),
     ChatScreen(),
-    ProfileScreen()
   ];
 
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class _DoctorMainScreenState extends State<DoctorMainScreen> {
 
 
       ),
-      GButton(icon: Icons.chat,onPressed: (){
+      GButton(icon: Icons.person,onPressed: (){
 
       },
         iconActiveColor: Colors.blue,

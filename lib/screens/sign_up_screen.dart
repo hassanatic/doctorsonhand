@@ -6,9 +6,15 @@ import 'package:doctors_on_hand/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:doctors_on_hand/screens/splash_screen.dart';
+
 
 import '../utils/color_utils.dart';
 import 'main_screen.dart';
+
+
+Set<Marker> markers = Set<Marker>();
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -16,6 +22,31 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late CollectionReference _markersRef;
+
+  void _addMarker(LatLng latLng) {
+    Marker newMarker = Marker(
+     // icon: ,
+      markerId: MarkerId(latLng.toString()),
+      position: latLng,
+    );
+
+    // Add the marker to Firestore
+    _markersRef.add({
+      'latitude': latLng.latitude,
+      'longitude': latLng.longitude,
+    });
+
+    setState(() {
+      markers.add(newMarker);
+    });
+  }
+
+
+
+
   // Function for user signup
   Future<void> signUp(String email, String password, String name) async {
     try {
@@ -79,6 +110,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
       // Signup successful
 
+
+
       User? user = userCredential.user;
       if (user != null) {
         await user.updateDisplayName(name);
@@ -90,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           .set({'role': _selectedRole});
 
 
-
+     _addMarker(LatLng(lat, long));
 
       String token = await userCredential.user!.getIdToken();
       await APIs.saveUserToken(token);
@@ -140,6 +173,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _passwordTextController.dispose();
     _specialityTextController.dispose();
     super.dispose();
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _markersRef = _firestore.collection('markers');
+
   }
 
   Widget build(BuildContext context) {
