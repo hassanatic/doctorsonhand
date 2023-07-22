@@ -426,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 lab.latitude,
                                 lab.longitude);
                             return SizedBox(
-                              height: 100,
+                              height: 110,
                               child: Padding(
                                 padding:
                                     const EdgeInsets.only(left: 8, right: 8),
@@ -440,8 +440,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       leading: const Icon(
                                           CupertinoIcons.lab_flask_solid),
                                       title: Text(lab.name),
-                                      subtitle: Text(
-                                          '${lab.vicinity} \n ${distance.toStringAsFixed(2)} km away'),
+                                      subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${lab.vicinity} ',
+                                              maxLines: 2,
+                                            ),
+                                            Text(
+                                                '${distance.toStringAsFixed(2)} km away'),
+                                          ]),
                                       trailing: IconButton(
                                         onPressed: () {},
                                         icon: Icon(Icons.directions),
