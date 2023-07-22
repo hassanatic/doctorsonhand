@@ -97,7 +97,7 @@ class Api {
   Future<List<Map<String, dynamic>>> fetchNearbyLaboratories(
       double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=5000&keyword=laboratory&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=10000&keyword=laboratory&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
 
