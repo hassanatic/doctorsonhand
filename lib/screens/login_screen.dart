@@ -18,6 +18,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
+  bool _isLoading = false;
+
+
   void getRole() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     String userId = await FirebaseAuth.instance.currentUser!.uid;
@@ -39,11 +42,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
+
   void _signInWithEmailAndPassword() async {
     final email = _emailTextController.text.trim();
     final password = _passwordTextController.text;
 
     try {
+      setState(() {
+        _isLoading = true;
+      });
+      FocusScope.of(context).unfocus();
+
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
@@ -67,6 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print('Error signing in: $e');
       // Show a snackbar or an error dialog to inform the user about the login error
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -79,49 +92,64 @@ class _LoginScreenState extends State<LoginScreen> {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-            hexToColor("439BFF"),
+        body: Stack(children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+              hexToColor("439BFF"),
 
-            hexToColor("7E5BED"),
-            // hexToColor("52CCB6"),
-          ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-          // LinearGradient // BoxDecoration
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  20, MediaQuery.of(context).size.height * 0.2, 20, 0),
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/images/app_icon.png',
-                    color: Colors.white,
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fitWidth,
-                  ),
-                  verticalSpace(30),
-                  reusableTextField("Enter Email", Icons.mail_outline, false,
-                      _emailTextController),
-                  verticalSpace(20),
-                  reusableTextField("Enter Password", Icons.lock_outline, true,
-                      _passwordTextController),
-                  verticalSpace(20),
-                  signInSignUpButton(context, true, () {
-                    _signInWithEmailAndPassword();
-                    //
-                    // Navigator.push(context,
-                    // MaterialPageRoute(builder: (context) => HomeScreen()));
-                  }),
-                  signUpOption(),
-                ],
+              hexToColor("7E5BED"),
+              // hexToColor("52CCB6"),
+            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+            // LinearGradient // BoxDecoration
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                    20, MediaQuery.of(context).size.height * 0.2, 20, 0),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/app_icon.png',
+                      color: Colors.white,
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.fitWidth,
+                    ),
+                    verticalSpace(30),
+                    reusableTextField("Enter Email", Icons.mail_outline, false,
+                        _emailTextController),
+                    verticalSpace(20),
+                    reusableTextField("Enter Password", Icons.lock_outline,
+                        true, _passwordTextController),
+                    verticalSpace(20),
+                    signInSignUpButton(context, true, () {
+                      _signInWithEmailAndPassword();
+                      //
+                      // Navigator.push(context,
+                      // MaterialPageRoute(builder: (context) => HomeScreen()));
+                    }),
+                    signUpOption(),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 6,
+                  ),
+                ),
+              ),
+            )
+        ]),
       ),
     );
   }
