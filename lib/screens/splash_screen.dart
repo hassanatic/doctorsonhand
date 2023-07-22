@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:doctors_on_hand/screens/sign_up_screen.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +13,7 @@ import 'doctor_main_screen.dart';
 import 'main_screen.dart';
 
 Set<Marker> markers = Set<Marker>();
-double lat=0;
+double lat = 0;
 double long = 0;
 
 class SplashScreen extends StatefulWidget {
@@ -29,16 +29,16 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   late GoogleMapController mapController;
 
-
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late CollectionReference _markersRef;
-
 
   Future<int> getUserRole() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
 
-    DocumentSnapshot snapshot =
-    await FirebaseFirestore.instance.collection('all_users').doc(userId).get();
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('all_users')
+        .doc(userId)
+        .get();
 
     if (snapshot.exists) {
       // The user document exists, so return the role
@@ -74,6 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Get the current position
     return await Geolocator.getCurrentPosition();
   }
+
   void _loadMarkersFromFirestore() {
     _markersRef.get().then((querySnapshot) {
       querySnapshot.docs.forEach((documentSnapshot) {
@@ -92,8 +93,6 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
   }
-
-
 
   void _fetchHospitals() async {
     // Make an HTTP request to the Google Places API
@@ -134,17 +133,16 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
 
-     getLocton();
+    getLocton();
     _markersRef = _firestore.collection('markers');
     _loadMarkersFromFirestore();
     _getCurrentLocation().then((Position position) async {
       // Use the retrieved position as needed
       print('Latitude: ${position.latitude}');
 
-lat = position.latitude;
-long = position.longitude;
+      lat = position.latitude;
+      long = position.longitude;
       print('Longitude: ${position.longitude}');
-
 
       _loadMarkersFromFirestore();
 
@@ -153,8 +151,11 @@ long = position.longitude;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                widget.userToken == null ? LoginScreen() : widget.role == 0 ? MainScreen() : DoctorMainScreen()),
+            builder: (context) => widget.userToken == null
+                ? LoginScreen()
+                : widget.role == 0
+                    ? MainScreen()
+                    : DoctorMainScreen()),
       );
     }).catchError((e) {
       // Handle any errors that occur during location retrieval
@@ -165,12 +166,15 @@ long = position.longitude;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                widget.userToken == null ? LoginScreen() :  widget.role == 0 ? MainScreen() : DoctorMainScreen()),
+            builder: (context) => widget.userToken == null
+                ? LoginScreen()
+                : widget.role == 0
+                    ? MainScreen()
+                    : DoctorMainScreen()),
       );
     });
 
-   // _fetchHospitals();
+    // _fetchHospitals();
   }
 
   Widget build(BuildContext context) {

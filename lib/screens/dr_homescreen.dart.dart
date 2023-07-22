@@ -1,4 +1,5 @@
 import 'package:doctors_on_hand/models/AppointmentData.dart';
+import 'package:doctors_on_hand/screens/nearby_labs.dart';
 import 'package:flutter/material.dart';
 
 class DrHomeScreen extends StatefulWidget {
@@ -17,19 +18,14 @@ class _DrHomeScreenState extends State<DrHomeScreen> {
   void initState() {
     super.initState();
     dataRows = appointmentList.map((Appointment) {
-        return DataRow(
-          cells: [
-            DataCell(Text(Appointment.patientName)),
-            DataCell(Text(Appointment.time)),
-            //DataCell(IconButton(icon: const Icon(Icons.edit),onPressed: (){},))
-           
-          ],
-        );
-      }).toList();
-
-
-
-
+      return DataRow(
+        cells: [
+          DataCell(Text(Appointment.patientName)),
+          DataCell(Text(Appointment.time)),
+          //DataCell(IconButton(icon: const Icon(Icons.edit),onPressed: (){},))
+        ],
+      );
+    }).toList();
 
     originalDataRows = List.from(dataRows);
   }
@@ -42,7 +38,10 @@ class _DrHomeScreenState extends State<DrHomeScreen> {
     } else {
       List<DataRow> updatedRows = [];
       for (var row in originalDataRows) {
-        if (row.cells[0].child.toString().toLowerCase().contains(name.toLowerCase())) {
+        if (row.cells[0].child
+            .toString()
+            .toLowerCase()
+            .contains(name.toLowerCase())) {
           updatedRows.add(row);
         }
       }
@@ -63,7 +62,8 @@ class DoctorPage extends StatelessWidget {
   final Function(String) updateDataRows;
   final FocusNode focusNode = FocusNode();
 
-  DoctorPage({Key? key, required this.dataRows, required this.updateDataRows}) : super(key: key);
+  DoctorPage({Key? key, required this.dataRows, required this.updateDataRows})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,13 +72,8 @@ class DoctorPage extends StatelessWidget {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
-
-
-
-        
         body: SafeArea(
           child: SingleChildScrollView(
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -119,7 +114,7 @@ class DoctorPage extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
                                 ),
-                                child:  Padding(
+                                child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     children: [
@@ -151,7 +146,7 @@ class DoctorPage extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
                                 ),
-                                child:  Padding(
+                                child: Padding(
                                   padding: EdgeInsets.all(16.0),
                                   child: Column(
                                     children: [
@@ -199,25 +194,23 @@ class DoctorPage extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 24, right: 24),
                             child: TextField(
                               scrollPadding: EdgeInsets.only(
-                                  bottom: MediaQuery.of(context).viewInsets.bottom
-
-                              ),
-
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom),
                               onChanged: (value) {
-                                final drHomeScreenState = context.findAncestorStateOfType<_DrHomeScreenState>();
+                                final drHomeScreenState =
+                                    context.findAncestorStateOfType<
+                                        _DrHomeScreenState>();
                                 if (drHomeScreenState != null) {
                                   drHomeScreenState.updateDataRows(value);
                                 }
                               },
                               decoration: const InputDecoration.collapsed(
-
                                 hintText: "Search",
                                 hintStyle: TextStyle(
                                   fontFamily: 'Poppins',
                                 ),
                               ),
                             ),
-
                           ),
                         ),
                       ),
@@ -225,15 +218,19 @@ class DoctorPage extends StatelessWidget {
                     ],
                   ),
                 ),
-
-               const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => NearbyLabs()));
+                  },
+                  child: Text('nearby labs'),
+                ),
+                const SizedBox(height: 20),
                 Column(
                   children: [
                     const Text(
-
                       'Appointment List',
                       style: TextStyle(
-
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -243,7 +240,7 @@ class DoctorPage extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
                         child: Container(
-                          width: MediaQuery.of(context).size.width*0.9,
+                          width: MediaQuery.of(context).size.width * 0.9,
                           decoration: BoxDecoration(
                             color: Colors.green.shade200,
                             borderRadius: BorderRadius.circular(10),
@@ -253,8 +250,6 @@ class DoctorPage extends StatelessWidget {
                               DataColumn(label: Text('Patient Name')),
                               DataColumn(label: Text('Time')),
                               //DataColumn(label: Text('Edit')),
-
-
                             ],
                             rows: dataRows,
                           ),
