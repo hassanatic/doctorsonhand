@@ -56,140 +56,148 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: Scaffold(
-        backgroundColor: hexToColor("#f8faff"),
-        body: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height / 2.6,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color.fromRGBO(81, 168, 255, 60),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(34),
-                  bottomRight: Radius.circular(34),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 28, bottom: 20),
-                    child: Text(
-                      'Hi, ${username?.toUpperCase()}',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.32,
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 45, left: 28),
-                    child: Text(
-                      'Let’s find\na nearby Doctor!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.16,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 25, left: 16),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 1.1,
-                      height: 56,
-                      decoration: ShapeDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.white,
-                            Colors.white.withOpacity(0.8999999761581421)
-                          ],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 24, right: 24),
-                          child: TextField(
-                              decoration: InputDecoration.collapsed(
-                                  hintText: "Search",
-                                  hintStyle: TextStyle(
-                                    fontFamily: 'Poppins',
-                                  ))),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 5),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Categories',
-                  style: TextStyle(
-                    color: Colors.black,
-
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                    //  letterSpacing: 0.40,
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Scaffold(
+          backgroundColor: hexToColor("#f8faff"),
+          body: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height / 2.6,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(81, 168, 255, 60),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(34),
+                    bottomRight: Radius.circular(34),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(15, 12, 15, 7),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceEvenly, // Align buttons with even spacing
-                children: [
-                  CategoryButton(AssetImage("assets/images/heart.png"), () {}),
-                  CategoryButton(AssetImage("assets/images/pills.png"), () {}),
-                  CategoryButton(AssetImage("assets/images/tooth.png"), () {}),
-                  CategoryButton(
-                      AssetImage("assets/images/maternity.png"), () {}),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30, top: 2, bottom: 2),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nearby Doctors',
-                  style: TextStyle(
-                    color: Colors.black,
-
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                    //  letterSpacing: 0.40,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-                child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
                 child: Column(
-                  children: doctors_list,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 28, bottom: 20),
+                      child: Text(
+                        'Hi, ${username?.toUpperCase()}',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.75),
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.32,
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 45, left: 28),
+                      child: Text(
+                        'Let’s find\na nearby Doctor!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.16,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 25, left: 16),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 1.1,
+                        height: 56,
+                        decoration: ShapeDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white,
+                              Colors.white.withOpacity(0.8999999761581421)
+                            ],
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                        ),
+                        child: const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 24, right: 24),
+                            child: TextField(
+                                decoration: InputDecoration.collapsed(
+                                    hintText: "Search",
+                                    hintStyle: TextStyle(
+                                      fontFamily: 'Poppins',
+                                    ))),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ))
-          ],
+              Padding(
+                padding: const EdgeInsets.only(left: 30, top: 5),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Categories',
+                    style: TextStyle(
+                      color: Colors.black,
+
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                      //  letterSpacing: 0.40,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(15, 12, 15, 7),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceEvenly, // Align buttons with even spacing
+                  children: [
+                    CategoryButton(
+                        AssetImage("assets/images/heart.png"), () {}),
+                    CategoryButton(
+                        AssetImage("assets/images/pills.png"), () {}),
+                    CategoryButton(
+                        AssetImage("assets/images/tooth.png"), () {}),
+                    CategoryButton(
+                        AssetImage("assets/images/maternity.png"), () {}),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, top: 2, bottom: 2),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Nearby Doctors',
+                    style: TextStyle(
+                      color: Colors.black,
+
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                      //  letterSpacing: 0.40,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                  child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
+                  child: Column(
+                    children: doctors_list,
+                  ),
+                ),
+              ))
+            ],
+          ),
         ),
       ),
     );

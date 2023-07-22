@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/models/DocorModel.dart';
 import 'package:doctors_on_hand/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class APIs {
@@ -25,7 +28,7 @@ class APIs {
     String userId = FirebaseAuth.instance.currentUser!.uid;
 
     DocumentSnapshot snapshot =
-    await FirebaseFirestore.instance.collection('users').doc(userId).get();
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
     if (snapshot.exists) {
       // The user document exists, so return the role
@@ -37,19 +40,19 @@ class APIs {
     }
   }
 
- static Future<void> saveUserRole(int role)async{
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setInt('role', role);
+  static Future<void> saveUserRole(int role) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('role', role);
+  }
 
-
-}
   static Future<void> saveUserToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userToken', token);
   }
 
   // for creating a new user
-  static Future<void> createDoctor(String name, String speciality, double cnic, String regCode) async {
+  static Future<void> createDoctor(
+      String name, String speciality, double cnic, String regCode) async {
     final docChatUser = DoctorModel(
         id: user.uid,
         name: user.displayName.toString(),
@@ -83,5 +86,30 @@ class APIs {
         .collection('users')
         .doc(user.uid)
         .set(chatUser.toJson());
+  }
+}
+
+class Api {
+  String apiKey = 'AIzaSyDoFoXFgBBpQRyTcIOCjfkKvjEpGgTjacc';
+
+  Api(this.apiKey);
+
+  Future<List<Map<String, dynamic>>> fetchNearbyLaboratories(
+      double latitude, double longitude) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=3000&type=laboratory&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        return List<Map<String, dynamic>>.from(data['results']);
+      } else {
+        throw Exception('Failed to fetch nearby laboratories');
+      }
+    } else {
+      throw Exception('Failed to fetch nearby laboratories');
+    }
   }
 }
