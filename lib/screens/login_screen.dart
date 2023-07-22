@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/apis/apis.dart';
 import 'package:doctors_on_hand/reuseable_widgets/reuseable_widgets.dart';
 import 'package:doctors_on_hand/screens/main_screen.dart';
@@ -16,7 +17,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   bool _isLoading = false;
+
+
+  void getRole() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String userId = await FirebaseAuth.instance.currentUser!.uid;
+    DocumentReference documentReference = firestore.collection('all_users').doc('userId');
+
+    try {
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+      if (documentSnapshot.exists) {
+        // Retrieve the desired field from the document data
+        dynamic role = documentSnapshot.get('role');
+        APIs.saveUserRole(role);
+        print('Field Value: $role');
+      } else {
+        print('Document does not exist.');
+      }
+    } catch (e) {
+      print('Error retrieving data: $e');
+    }
+  }
+
+
+
   void _signInWithEmailAndPassword() async {
     final email = _emailTextController.text.trim();
     final password = _passwordTextController.text;
@@ -35,7 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Save the user token after successful authentication
       String token = await userCredential.user!.getIdToken();
-      await APIs.saveUserToken(token);
+
+      // String userId = await userCredential.user!.uid;
+      // await FirebaseFirestore.instance.collection('all_users').doc(userId).get('role');
+
+      getRole();
+       await APIs.saveUserToken(token);
 
       // Authentication successful, navigate back to the chat screen
       Navigator.pushReplacement(
