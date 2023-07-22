@@ -14,7 +14,7 @@ final ThemeData lightTheme = ThemeData(
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cupertinoOverrideTheme: CupertinoThemeData.raw(Brightness.dark, Colors.black,
-      Colors.white, textThemeData, Colors.black, Colors.black),
+      Colors.white, textThemeData, Colors.black, Colors.black, true),
 );
 
 final ThemeData data = ThemeData(
