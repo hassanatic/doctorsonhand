@@ -1,4 +1,8 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../apis/apis.dart';
 import '../models/laboratory.dart';
@@ -11,9 +15,39 @@ class NearbyLabs extends StatefulWidget {
 }
 
 class _NearbyLabsState extends State<NearbyLabs> {
+  double? latitude;
+  double? longitude;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      });
+    } catch (e) {
+      print("Error while fetching location: $e");
+      // Handle any errors while getting the location
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LabsList(latitude: 32.571144, longitude: 74.075005);
+    if (latitude == null || longitude == null) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      return LabsList(latitude: latitude!, longitude: longitude!);
+    }
   }
 }
 
@@ -43,9 +77,34 @@ class _LabsListState extends State<LabsList> {
         await api.fetchNearbyLaboratories(widget.latitude, widget.longitude);
     setState(() {
       labs = labsData
-          .map((lab) => Laboratory(lab['name'], lab['vicinity']))
+          .map((lab) => Laboratory(
+                lab['name'],
+                lab['vicinity'],
+                lab['geometry']['location']['lat'],
+                lab['geometry']['location']['lng'],
+              ))
           .toList();
     });
+  }
+
+  double calculateDistance(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+    const double earthRadius = 6371; // Earth's radius in kilometers
+    double dLat = _degreesToRadians(endLatitude - startLatitude);
+    double dLon = _degreesToRadians(endLongitude - startLongitude);
+
+    double a = pow(sin(dLat / 2), 2) +
+        cos(_degreesToRadians(startLatitude)) *
+            cos(_degreesToRadians(endLatitude)) *
+            pow(sin(dLon / 2), 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double distance = earthRadius * c;
+
+    return distance;
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * (pi / 180);
   }
 
   @override
@@ -60,6 +119,8 @@ class _LabsListState extends State<LabsList> {
               itemCount: labs.length,
               itemBuilder: (context, index) {
                 final lab = labs[index];
+                final distance = calculateDistance(widget.latitude,
+                    widget.longitude, lab.latitude, lab.longitude);
                 return SizedBox(
                   height: 150,
                   child: Padding(
@@ -71,8 +132,10 @@ class _LabsListState extends State<LabsList> {
                       color: Colors.cyan,
                       child: Center(
                         child: ListTile(
+                          leading: const Icon(CupertinoIcons.lab_flask_solid),
                           title: Text(lab.name),
-                          subtitle: Text(lab.vicinity),
+                          subtitle: Text(
+                              '${lab.vicinity} \n\n ${distance.toStringAsFixed(2)} km away'),
                           trailing: IconButton(
                             onPressed: () {},
                             icon: Icon(Icons.directions),
