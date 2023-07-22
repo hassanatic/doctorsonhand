@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/color_utils.dart';
+import 'doctor_main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,22 +20,28 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
+  int userRole = 0;
 
 
-  void getRole() async {
+  Future<int?> getRole() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     String userId = await FirebaseAuth.instance.currentUser!.uid;
-    DocumentReference documentReference = firestore.collection('all_users').doc('userId');
+    DocumentReference documentReference = firestore.collection('all_users').doc(userId);
 
     try {
       DocumentSnapshot documentSnapshot = await documentReference.get();
       if (documentSnapshot.exists) {
         // Retrieve the desired field from the document data
         dynamic role = documentSnapshot.get('role');
-        APIs.saveUserRole(role);
+
         print('Field Value: $role');
+        userRole = role;
+        APIs.saveUserRole(role);
+        print(userRole);
+return userRole;
       } else {
         print('Document does not exist.');
+        return 0;
       }
     } catch (e) {
       print('Error retrieving data: $e');
@@ -65,13 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
       // String userId = await userCredential.user!.uid;
       // await FirebaseFirestore.instance.collection('all_users').doc(userId).get('role');
 
-      getRole();
+      await getRole();
        await APIs.saveUserToken(token);
-
+print(userRole);
       // Authentication successful, navigate back to the chat screen
       Navigator.pushReplacement(
+
         context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
+        MaterialPageRoute(builder: (context) => userRole == 0 ? MainScreen() : DoctorMainScreen()),
       );
     } catch (e) {
       print('Error signing in: $e');
