@@ -13,8 +13,8 @@ import 'doctor_main_screen.dart';
 import 'main_screen.dart';
 
 Set<Marker> markers = Set<Marker>();
-double lat = 0;
-double long = 0;
+double current_location_lat = 0;
+double current_location_long = 0;
 
 class SplashScreen extends StatefulWidget {
   final String? userToken;
@@ -94,35 +94,35 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  void _fetchHospitals() async {
-    // Make an HTTP request to the Google Places API
-    final response = await http.get(Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=25.1564,20.456&radius=5000&type=hospital&key=AIzaSyD1EfwwENHXTYcGNyibN8PJEOSDrb3lRew'));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      // Extract the hospital data from the API response
-      final List<dynamic> results = data['results'];
-
-      setState(() {
-        markers = results.map((result) {
-          final location = result['geometry']['location'];
-          final lat = location['lat'];
-          final lng = location['lng'];
-          final name = result['name'];
-
-          return Marker(
-            markerId: MarkerId(name),
-            position: LatLng(lat, lng),
-            infoWindow: InfoWindow(title: name),
-          );
-        }).toSet();
-
-        print(markers);
-      });
-    }
-  }
+  // void _fetchHospitals() async {
+  //   // Make an HTTP request to the Google Places API
+  //   final response = await http.get(Uri.parse(
+  //       'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=25.1564,20.456&radius=5000&type=hospital&key=AIzaSyD1EfwwENHXTYcGNyibN8PJEOSDrb3lRew'));
+  //
+  //   if (response.statusCode == 200) {
+  //     final data = json.decode(response.body);
+  //
+  //     // Extract the hospital data from the API response
+  //     final List<dynamic> results = data['results'];
+  //
+  //     setState(() {
+  //       markers = results.map((result) {
+  //         final location = result['geometry']['location'];
+  //         final lat = location['lat'];
+  //         final lng = location['lng'];
+  //         final name = result['name'];
+  //
+  //         return Marker(
+  //           markerId: MarkerId(name),
+  //           position: LatLng(lat, lng),
+  //           infoWindow: InfoWindow(title: name),
+  //         );
+  //       }).toSet();
+  //
+  //       print(markers);
+  //     });
+  //   }
+  // }
 
   void getLocton() async {
     await Geolocator.requestPermission();
@@ -140,8 +140,8 @@ class _SplashScreenState extends State<SplashScreen> {
       // Use the retrieved position as needed
       print('Latitude: ${position.latitude}');
 
-      lat = position.latitude;
-      long = position.longitude;
+      current_location_lat = position.latitude;
+      current_location_long = position.longitude;
       print('Longitude: ${position.longitude}');
 
       _loadMarkersFromFirestore();

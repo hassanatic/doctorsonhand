@@ -129,7 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           .doc(userId)
           .set({'role': _selectedRole});
 
-      _addMarker(LatLng(lat, long));
+      _addMarker(LatLng(current_location_lat, current_location_long));
 
       String token = await userCredential.user!.getIdToken();
       await APIs.saveUserToken(token);

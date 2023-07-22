@@ -1,5 +1,4 @@
 import 'package:doctors_on_hand/models/AppointmentData.dart';
-import 'package:doctors_on_hand/screens/nearby_labs.dart';
 import 'package:flutter/material.dart';
 
 class DrHomeScreen extends StatefulWidget {
@@ -217,13 +216,6 @@ class DoctorPage extends StatelessWidget {
                       const SizedBox(height: 16.0),
                     ],
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => NearbyLabs()));
-                  },
-                  child: Text('nearby labs'),
                 ),
                 const SizedBox(height: 20),
                 Column(
