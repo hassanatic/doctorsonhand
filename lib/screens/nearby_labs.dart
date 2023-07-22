@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 import '../apis/apis.dart';
 import '../models/laboratory.dart';
@@ -30,35 +29,18 @@ class LabsList extends StatefulWidget {
 
 class _LabsListState extends State<LabsList> {
   late List<Laboratory> labs = [];
-  double latitude = 0.0; // Variable to hold latitude
-  double longitude = 0.0; // Variable to hold longitude
+  // Variable to hold longitude
 
   @override
   void initState() {
     super.initState();
     _fetchLabs();
-    _getCurrentLocation();
-  }
-
-  Future<void> _getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      setState(() {
-        latitude = position.latitude;
-        longitude = position.longitude;
-      });
-      _fetchLabs(); // Fetch labs after getting the location
-    } catch (e) {
-      print("Error while fetching location: $e");
-      // Handle any errors while getting the location
-    }
   }
 
   Future<void> _fetchLabs() async {
     final api = Api('AIzaSyDoFoXFgBBpQRyTcIOCjfkKvjEpGgTjacc');
-    final labsData = await api.fetchNearbyLaboratories(latitude, longitude);
+    final labsData =
+        await api.fetchNearbyLaboratories(widget.latitude, widget.longitude);
     setState(() {
       labs = labsData
           .map((lab) => Laboratory(lab['name'], lab['vicinity']))
