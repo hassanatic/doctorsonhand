@@ -132,4 +132,23 @@ class Api {
       throw Exception('Failed to fetch nearby laboratories');
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchNearbyHospitals(
+      double latitude, double longitude) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=10000&keyword=hospital&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        return List<Map<String, dynamic>>.from(data['results']);
+      } else {
+        throw Exception('Failed to fetch nearby hospitals');
+      }
+    } else {
+      throw Exception('Failed to fetch nearby hospitals');
+    }
+  }
 }
