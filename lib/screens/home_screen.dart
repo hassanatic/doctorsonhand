@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/apis/apis.dart';
-import 'package:doctors_on_hand/models/DocorModel.dart';
 import 'package:doctors_on_hand/screens/splash_screen.dart';
 import 'package:doctors_on_hand/utils/color_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/laboratory.dart';
 import 'doctor_detail_screen.dart';
@@ -19,37 +19,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  void _openGoogleMaps(Laboratory lab) async {
+    final latitude = lab.latitude;
+    final longitude = lab.longitude;
+    final url =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   List<Widget> dentist_list = [];
   List<Widget> gyno_list = [];
   List<Widget> cardiologist_list = [];
 
   List<Widget> default_doc_list = [];
   List<Laboratory> labs = [];
-  List<Widget> all_doctors = [];
-
-  String searchText = '';
-  List<DoctorModel> searchResults = [];
-
-  Future<void> searchDoctorsByName(String name) async {
-    try {
-      // Query doctors collection based on the 'name' field
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('doctors')
-          .where('name', isGreaterThanOrEqualTo: name)
-          .get();
-
-      List<DoctorModel> results = [];
-      for (var doc in querySnapshot.docs) {
-        results.add(DoctorModel.fromSnapshot(doc));
-      }
-
-      setState(() {
-        searchResults = results;
-      });
-    } catch (e) {
-      print('Error searching doctors: $e');
-    }
-  }
 
   bool isLabsSelected = false;
 
@@ -136,64 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return distance;
   }
 
-  void fetchDoctors() async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference collectionReference = firestore.collection('doctors');
-
-    try {
-      QuerySnapshot querySnapshot = await collectionReference.get();
-
-      if (querySnapshot.size > 0) {
-        List<DocumentSnapshot> documents = querySnapshot.docs;
-        // Process each document and access all fields
-        for (var document in documents) {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-          // Access all fields in the document
-          String docName = data['name'];
-          String bio = data['bio'];
-          String speciality = data['speciality'];
-          GeoPoint location = data['location'];
-          String id = data['id'];
-          //  List<String> other_spc = data['other_specialities'];
-          List<dynamic> firestoreList = data['other_specialities'];
-          List<String> other_spc =
-              firestoreList.map((item) => item.toString()).toList();
-
-          all_doctors.add(DoctorsCard(
-            doctorName: docName,
-            speciality: speciality,
-            profileImage: AssetImage(
-              "assets/images/doctor1.png",
-            ),
-            onPressed: (context) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DoctorDetailsScreen(
-                            id: id,
-                            doctorName: docName,
-                            speciality: speciality,
-                            bio: bio,
-                            ratings: 4.0,
-                            profileImage: "assets/images/doctor1.png",
-                            otherSpecialities: other_spc,
-                            locaion: location,
-                          )));
-            },
-            location: location,
-          ));
-
-          // ... and so on
-          print(
-              'Document ID: ${document.id}, Field Nane: $docName, Specilaity Field: $speciality');
-        }
-      }
-    } catch (e) {
-      print('Error retrieving documents: $e');
-    }
-  }
-
   void getDoctorsBySpeciality(String speciality) async {
     String spc = speciality;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -211,6 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
           // Access all fields in the document
+
           String docName = data['name'];
           String bio = data['bio'];
           String speciality = data['speciality'];
@@ -247,6 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ));
           } else if (spc == "gynocologist") {
             gyno_list.add(DoctorsCard(
+              location: location,
               doctorName: docName,
               speciality: speciality,
               profileImage: AssetImage(
@@ -267,7 +199,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               locaion: location,
                             )));
               },
-              location: location,
             ));
           }
 
@@ -397,17 +328,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Padding(
                           padding: EdgeInsets.only(left: 24, right: 24),
                           child: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  searchText = value;
-                                });
-                                searchDoctorsByName(
-                                    value); // Call the search function here
-                              },
                               decoration: InputDecoration.collapsed(
                                   hintText: "Search",
                                   hintStyle: TextStyle(
@@ -557,7 +481,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 '${distance.toStringAsFixed(2)} km away'),
                                           ]),
                                       trailing: IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          _openGoogleMaps(lab);
+                                        },
                                         icon: Icon(Icons.directions),
                                       ),
                                     ),

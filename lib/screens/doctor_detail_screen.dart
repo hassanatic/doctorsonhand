@@ -3,6 +3,7 @@ import 'package:doctors_on_hand/models/appointment_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DoctorDetailsScreen extends StatefulWidget {
   final String doctorName;
@@ -29,6 +30,19 @@ class DoctorDetailsScreen extends StatefulWidget {
 }
 
 class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
+  void _openGoogleMaps() async {
+    final latitude = widget.locaion.latitude;
+    final longitude = widget.locaion.longitude;
+    final url =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   late Appointment appointment;
 
   int selectedSlotIndex = -1;
@@ -283,10 +297,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
             const SizedBox(height: 35.0),
             ElevatedButton(
                 onPressed: () {
-                  //TODO: ithy directions wala method la de
-
-                  final latitude = widget.locaion.latitude;
-                  final longitude = widget.locaion.longitude;
+                  _openGoogleMaps();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(81, 168, 255, 60),
