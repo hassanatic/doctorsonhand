@@ -51,22 +51,24 @@ class APIs {
   }
 
   // for creating a new user
-  static Future<void> createDoctor(
-      String name, String speciality, double cnic, String regCode) async {
+  static Future<void> createDoctor(String name, String speciality, double cnic,
+      String regCode, GeoPoint location) async {
     final docChatUser = DoctorModel(
-        id: user.uid,
-        name: user.displayName.toString(),
-        email: user.email.toString(),
-        bio: "!",
-        image: user.photoURL.toString(),
-        // createdAt: time,
-        // isOnline: false,
-        // lastActive: time,
-        pushToken: '',
-        speciality: speciality,
-        cnic: cnic,
-        otherSpecialities: [],
-        regCode: regCode);
+      id: user.uid,
+      name: user.displayName.toString(),
+      email: user.email.toString(),
+      bio: "Hey! this is your personal doctor",
+      image: user.photoURL.toString(),
+      // createdAt: time,
+      // isOnline: false,
+      // lastActive: time,
+      pushToken: '',
+      speciality: speciality,
+      cnic: cnic,
+      otherSpecialities: ["dentist", "surgeon"],
+      regCode: regCode,
+      location: location,
+    );
 
     return await firestore
         .collection('doctors')

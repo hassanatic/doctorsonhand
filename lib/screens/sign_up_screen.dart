@@ -67,6 +67,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           .collection('all_users')
           .doc(userId)
           .set({'role': _selectedRole});
+      await FirebaseFirestore.instance
+          .collection('user_locations')
+          .doc(userId)
+          .set({
+        'location': GeoPoint(current_location_lat, current_location_long)
+      });
 
       String token = await userCredential.user!.getIdToken();
       await APIs.saveUserToken(token);
@@ -129,6 +135,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           .doc(userId)
           .set({'role': _selectedRole});
 
+      await FirebaseFirestore.instance
+          .collection('doctor_locations')
+          .doc(userId)
+          .set({
+        'location': GeoPoint(current_location_lat, current_location_long)
+      });
+
       _addMarker(LatLng(current_location_lat, current_location_long));
 
       String token = await userCredential.user!.getIdToken();
@@ -144,11 +157,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       } else {
         print("false");
         (await APIs.createDoctor(
-                _nameTextController.text,
-                _specialityTextController.text,
-                double.parse(_idTextController.text),
-                _licenceTextController.text)
-            .then((value) {
+          _nameTextController.text,
+          _specialityTextController.text,
+          double.parse(_idTextController.text),
+          _licenceTextController.text,
+          GeoPoint(current_location_lat, current_location_long),
+        ).then((value) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => DoctorMainScreen()));
         }));

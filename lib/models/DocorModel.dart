@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 String doctorModelToJson(DoctorModel data) => json.encode(data.toJson());
 
 class DoctorModel {
@@ -13,19 +15,20 @@ class DoctorModel {
   List<String> otherSpecialities;
   String regCode;
   String image;
+  GeoPoint location;
 
-  DoctorModel({
-    required this.speciality,
-    required this.name,
-    required this.bio,
-    required this.cnic,
-    required this.image,
-    required this.id,
-    required this.pushToken,
-    required this.email,
-    required this.otherSpecialities,
-    required this.regCode,
-  });
+  DoctorModel(
+      {required this.speciality,
+      required this.name,
+      required this.bio,
+      required this.cnic,
+      required this.image,
+      required this.id,
+      required this.pushToken,
+      required this.email,
+      required this.otherSpecialities,
+      required this.regCode,
+      required this.location});
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) => DoctorModel(
         speciality: json["speciality"],
@@ -39,6 +42,7 @@ class DoctorModel {
         otherSpecialities:
             List<String>.from(json["other_specialities"].map((x) => x)),
         regCode: json["reg_code"],
+        location: json["location"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -53,5 +57,6 @@ class DoctorModel {
         "other_specialities":
             List<dynamic>.from(otherSpecialities.map((x) => x)),
         "reg_code": regCode,
+        "location": location,
       };
 }
