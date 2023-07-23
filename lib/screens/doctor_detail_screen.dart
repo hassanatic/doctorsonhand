@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctors_on_hand/models/appointment_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 class DoctorDetailsScreen extends StatefulWidget {
   final String doctorName;
+  final String id;
   final String speciality;
   final String bio;
   final double ratings;
@@ -17,6 +20,7 @@ class DoctorDetailsScreen extends StatefulWidget {
     required this.ratings,
     required this.profileImage,
     required this.otherSpecialities,
+    required this.id,
   });
 
   @override
@@ -24,20 +28,23 @@ class DoctorDetailsScreen extends StatefulWidget {
 }
 
 class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
+  late Appointment appointment;
+
   int selectedSlotIndex = -1;
 
-late String timeSlot;
+  late String timeSlot;
   late DateTime selectedDate;
   late List<String> timeSlots;
-
 
   @override
   void initState() {
     // TODO: implement initState
-    selectedDate = DateTime.now().add(const Duration(days: 1)); // Start from tomorrow
+    selectedDate =
+        DateTime.now().add(const Duration(days: 1)); // Start from tomorrow
     timeSlots = generateTimeSlots();
     super.initState();
   }
+
   List<String> generateTimeSlots() {
     // Logic to generate time slots based on your requirements
     // You can replace this with your own implementation
@@ -47,8 +54,10 @@ late String timeSlot;
     final int startHour = 9; // Start hour of the day
     final int endHour = 18; // End hour of the day
 
-    DateTime currentTime = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, startHour);
-    DateTime endTime = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, endHour);
+    DateTime currentTime = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, startHour);
+    DateTime endTime = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, endHour);
 
     while (currentTime.isBefore(endTime)) {
       String formattedTime = DateFormat('hh:mm a').format(currentTime);
@@ -59,6 +68,7 @@ late String timeSlot;
 
     return slots;
   }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -70,7 +80,8 @@ late String timeSlot;
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        timeSlots = generateTimeSlots(); // Update time slots when date is changed
+        timeSlots =
+            generateTimeSlots(); // Update time slots when date is changed
       });
     }
   }
@@ -100,7 +111,6 @@ late String timeSlot;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Doctors Details'),
@@ -196,7 +206,6 @@ late String timeSlot;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Card(
-
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -218,7 +227,6 @@ late String timeSlot;
               ),
             ),
             const SizedBox(height: 16.0),
-
             Center(
               child: TextButton(
                 onPressed: () => _selectDate(context),
@@ -228,7 +236,6 @@ late String timeSlot;
                 ),
               ),
             ),
-
             const SizedBox(height: 24.0),
             const Text(
               'Select Appointment Time:',
@@ -238,7 +245,6 @@ late String timeSlot;
               ),
             ),
             const SizedBox(height: 16.0),
-
             Container(
               height: 60.0,
               child: ListView.builder(
@@ -256,16 +262,16 @@ late String timeSlot;
                         });
                       },
                       child: Card(
-                        color: selectedSlotIndex == index ? const Color.fromRGBO(81, 168, 255, 60) : null, // Change color if selected
+                        color: selectedSlotIndex == index
+                            ? const Color.fromRGBO(81, 168, 255, 60)
+                            : null,
+                        // Change color if selected
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Container(
-
-
-                              child: Center(child: Text(slots))),
+                          child: Container(child: Center(child: Text(slots))),
                         ),
                       ),
                     ),
@@ -277,27 +283,41 @@ late String timeSlot;
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: ElevatedButton(
+                  onPressed: () async {
+                    String appointmentDate =
+                        DateFormat('MMM d, yyyy').format(selectedDate);
 
+                    DateFormat format = DateFormat('MMM dd, yyyy hh:mm a');
+                    String combineDateTime = '$appointmentDate $timeSlot';
 
-                  onPressed: (){
+                    DateTime appointmentTime = format.parse(combineDateTime);
+                    //  DateTime appointmentTime = DateTime.parse(combineDateTime);
+                    print(appointmentTime);
+                    appointment = Appointment(
+                        doctorId: widget.id,
+                        patientName:
+                            FirebaseAuth.instance.currentUser!.displayName ??
+                                '',
+                        date: Timestamp.fromDate(appointmentTime));
 
-                  _selectTimeSlot(timeSlot);
-                       },
+                    await bookAppointment(appointment, widget.id);
+                    _selectTimeSlot(timeSlot);
+                  },
                   style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(81, 168, 255, 60),
+                    backgroundColor: const Color.fromRGBO(81, 168, 255, 60),
                     shape: const StadiumBorder(),
                   ),
-
-
-
                   child: const Padding(
-                    padding: EdgeInsets.only(top: 18,bottom: 18),
-                    child: Center(child: Text('Book Appointment',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+                    padding: EdgeInsets.only(top: 18, bottom: 18),
+                    child: Center(
+                      child: Text(
+                        'Book Appointment',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),),
+                    ),
                   )),
             )
           ],
@@ -306,4 +326,3 @@ late String timeSlot;
     );
   }
 }
-

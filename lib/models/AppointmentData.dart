@@ -1,25 +1,30 @@
-import 'package:flutter/material.dart';
 
 
-class Appointment {
+class Appointmentt {
   final String patientName;
   final String time;
 
-
-  Appointment({
+  Appointmentt({
     required this.patientName,
     required this.time,
-
   });
 }
 
-
-List <Appointment> appointmentList = [
-  Appointment(patientName: 'patientName', time: 'time',),
-  Appointment(patientName: 'patientName', time: 'time',),
-  Appointment(patientName: 'patientName', time: 'time',),
-  Appointment(patientName: 'patientName', time: 'time',),
-
+List<Appointmentt> appointmentList = [
+  Appointmentt(
+    patientName: 'patientName',
+    time: 'time',
+  ),
+  Appointmentt(
+    patientName: 'patientName',
+    time: 'time',
+  ),
+  Appointmentt(
+    patientName: 'patientName',
+    time: 'time',
+  ),
+  Appointmentt(
+    patientName: 'patientName',
+    time: 'time',
+  ),
 ];
-
-

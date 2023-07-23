@@ -6,7 +6,6 @@ import 'package:doctors_on_hand/screens/splash_screen.dart';
 import 'package:doctors_on_hand/utils/color_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../models/laboratory.dart';
 import 'doctor_detail_screen.dart';
@@ -19,19 +18,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _openGoogleMaps(Laboratory lab) async {
-    final latitude = lab.latitude;
-    final longitude = lab.longitude;
-    final url =
-        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   List<Widget> dentist_list = [];
   List<Widget> gyno_list = [];
   List<Widget> cardiologist_list = [];
@@ -41,25 +27,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool isLabsSelected = false;
 
-  Color _containerColor1 = const Color.fromRGBO(81, 168, 255, 60);
-  Color _containerColor2 = const Color.fromRGBO(81, 168, 255, 60);
-  Color _containerColor3 = const Color.fromRGBO(81, 168, 255, 60);
-  Color _containerColor4 = const Color.fromRGBO(81, 168, 255, 60);
+  Color _containerColor1 = Color.fromRGBO(81, 168, 255, 60);
+  Color _containerColor2 = Color.fromRGBO(81, 168, 255, 60);
+  Color _containerColor3 = Color.fromRGBO(81, 168, 255, 60);
+  Color _containerColor4 = Color.fromRGBO(81, 168, 255, 60);
 
   void _updateContainerColors(int containerNumber) {
     setState(() {
-      _containerColor1 = containerNumber == 1
-          ? Colors.red
-          : const Color.fromRGBO(81, 168, 255, 60);
-      _containerColor2 = containerNumber == 2
-          ? Colors.red
-          : const Color.fromRGBO(81, 168, 255, 60);
-      _containerColor3 = containerNumber == 3
-          ? Colors.red
-          : const Color.fromRGBO(81, 168, 255, 60);
-      _containerColor4 = containerNumber == 4
-          ? Colors.red
-          : const Color.fromRGBO(81, 168, 255, 60);
+      _containerColor1 =
+          containerNumber == 1 ? Colors.red : Color.fromRGBO(81, 168, 255, 60);
+      _containerColor2 =
+          containerNumber == 2 ? Colors.red : Color.fromRGBO(81, 168, 255, 60);
+      _containerColor3 =
+          containerNumber == 3 ? Colors.red : Color.fromRGBO(81, 168, 255, 60);
+      _containerColor4 =
+          containerNumber == 4 ? Colors.red : Color.fromRGBO(81, 168, 255, 60);
     });
   }
 
@@ -77,14 +59,14 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.cyan.withOpacity(0.35),
               spreadRadius: 1,
               blurRadius: 4,
-              offset: const Offset(0, 3), // changes position of shadow
+              offset: Offset(0, 3), // changes position of shadow
             ),
           ],
           shape: BoxShape.circle,
           color: _containerColor1,
         ),
         child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
             child: Image(
               image: image,
             )),
@@ -157,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
             dentist_list.add(DoctorsCard(
               doctorName: docName,
               speciality: speciality,
-              profileImage: const AssetImage(
+              profileImage: AssetImage(
                 "assets/images/doctor1.png",
               ),
               onPressed: (context) {
@@ -177,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
             gyno_list.add(DoctorsCard(
               doctorName: docName,
               speciality: speciality,
-              profileImage: const AssetImage(
+              profileImage: AssetImage(
                 "assets/images/doctor1.png",
               ),
               onPressed: (context) {
@@ -199,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
             cardiologist_list.add(DoctorsCard(
               doctorName: docName,
               speciality: speciality,
-              profileImage: const AssetImage(
+              profileImage: AssetImage(
                 "assets/images/doctor1.png",
               ),
               onPressed: (context) {
@@ -333,8 +315,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 30, top: 5),
+            Padding(
+              padding: const EdgeInsets.only(left: 30, top: 5),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -351,13 +333,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(15, 12, 15, 7),
+              padding: EdgeInsets.fromLTRB(15, 12, 15, 7),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment
                     .spaceEvenly, // Align buttons with even spacing
                 children: [
-                  CategoryButton(const AssetImage("assets/images/heart.png"),
-                      () {
+                  CategoryButton(AssetImage("assets/images/heart.png"), () {
                     setState(() {
                       default_doc_list.clear();
                       isLabsSelected = false;
@@ -365,14 +346,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     getDoctorsBySpeciality('cardiologist');
                   }),
-                  CategoryButton(const AssetImage("assets/images/pills.png"),
-                      () {
+                  CategoryButton(AssetImage("assets/images/pills.png"), () {
                     setState(() {
                       isLabsSelected = true;
                     });
                   }),
-                  CategoryButton(const AssetImage("assets/images/tooth.png"),
-                      () {
+                  CategoryButton(AssetImage("assets/images/tooth.png"), () {
                     setState(() {
                       default_doc_list.clear();
                       isLabsSelected = false;
@@ -380,8 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     getDoctorsBySpeciality('dentist');
                   }),
-                  CategoryButton(
-                      const AssetImage("assets/images/maternity.png"), () {
+                  CategoryButton(AssetImage("assets/images/maternity.png"), () {
                     setState(() {
                       default_doc_list.clear();
                       isLabsSelected = false;
@@ -393,14 +371,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                left: 30,
-                top: 2,
-              ),
+              padding: const EdgeInsets.only(left: 30, top: 2, bottom: 2),
               child: Align(
                   alignment: Alignment.centerLeft,
                   child: isLabsSelected != true
-                      ? const Text(
+                      ? Text(
                           'Nearby Doctors',
                           style: TextStyle(
                             color: Colors.black,
@@ -411,13 +386,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             //  letterSpacing: 0.40,
                           ),
                         )
-                      : const Text(
+                      : Text(
                           'Nearby Labs',
                           style: TextStyle(
                             color: Colors.black,
+
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Poppins',
+                            //  letterSpacing: 0.40,
                           ),
                         )),
             ),
@@ -426,13 +403,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: default_doc_list != []
                         ? SingleChildScrollView(
                             child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 5, 15, 0),
+                                padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
                                 child: Column(
                                   children: default_doc_list,
                                 )),
                           )
-                        : const Text(
+                        : Text(
                             'No doctors found',
                             style:
                                 TextStyle(color: Colors.black54, fontSize: 24),
@@ -441,7 +417,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 : labs != null
                     ? Expanded(
                         child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
                           itemCount: labs.length,
                           itemBuilder: (context, index) {
                             final lab = labs[index];
@@ -451,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 lab.latitude,
                                 lab.longitude);
                             return SizedBox(
-                              height: 120,
+                              height: 100,
                               child: Padding(
                                 padding:
                                     const EdgeInsets.only(left: 8, right: 8),
@@ -459,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   elevation: 3,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15)),
-                                  color: const Color.fromRGBO(81, 168, 255, 60),
+                                  color: Color.fromRGBO(81, 168, 255, 60),
                                   child: Center(
                                     child: ListTile(
                                       leading: const Icon(
@@ -468,10 +443,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       subtitle: Text(
                                           '${lab.vicinity} \n ${distance.toStringAsFixed(2)} km away'),
                                       trailing: IconButton(
-                                        onPressed: () {
-                                          _openGoogleMaps(lab);
-                                        },
-                                        icon: const Icon(Icons.directions),
+                                        onPressed: () {},
+                                        icon: Icon(Icons.directions),
                                       ),
                                     ),
                                   ),
@@ -515,9 +488,9 @@ class DoctorsCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         elevation: 3,
-        color: const Color.fromRGBO(81, 168, 255, 90),
+        color: Color.fromRGBO(81, 168, 255, 90),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 0, 20),
+          padding: EdgeInsets.fromLTRB(20, 10, 0, 20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -527,7 +500,7 @@ class DoctorsCard extends StatelessWidget {
                 backgroundImage: profileImage,
                 radius: 33,
               ),
-              const SizedBox(
+              SizedBox(
                 width: 15,
               ),
               Column(
@@ -536,7 +509,7 @@ class DoctorsCard extends StatelessWidget {
                 children: [
                   Text(
                     doctorName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                       fontFamily: 'Poppins',
@@ -544,7 +517,7 @@ class DoctorsCard extends StatelessWidget {
                       letterSpacing: -0.16,
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 5,
                   ),
                   Text(
@@ -582,9 +555,9 @@ Widget DoctorsCardd(
         borderRadius: BorderRadius.circular(15),
       ),
       elevation: 3,
-      color: const Color.fromRGBO(81, 168, 255, 90),
+      color: Color.fromRGBO(81, 168, 255, 90),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 0, 20),
+        padding: EdgeInsets.fromLTRB(20, 10, 0, 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -594,7 +567,7 @@ Widget DoctorsCardd(
               backgroundImage: image,
               radius: 33,
             ),
-            const SizedBox(
+            SizedBox(
               width: 15,
             ),
             Column(
@@ -603,7 +576,7 @@ Widget DoctorsCardd(
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
                     fontFamily: 'Poppins',
@@ -611,7 +584,7 @@ Widget DoctorsCardd(
                     letterSpacing: -0.16,
                   ),
                 ),
-                const SizedBox(
+                SizedBox(
                   width: 5,
                 ),
                 Text(
