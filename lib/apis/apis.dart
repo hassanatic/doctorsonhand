@@ -14,11 +14,29 @@ class APIs {
   // for accessing cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  static late DoctorModel me;
+
   static User get user => auth.currentUser!;
 
   static Future<bool> doctorExists() async {
     return (await firestore.collection('doctors').doc(user.uid).get()).exists;
   }
+
+  // static Future<void> getSelfInfo()async {
+  //   await FirebaseFirestore.instance.collection('doctors').doc(user.uid).get().then((user) async {
+  //     if(user.exists) {
+  //       me = DoctorModel.fromJson(user.data()!);
+  //     }
+  //     else{
+  //      await createDoctor().then((value) => getSelfInfo());
+  //
+  //     }
+  //
+  //
+  //   });
+  //
+  //
+  // }
 
   static Future<bool> userExists() async {
     return (await firestore.collection('users').doc(user.uid).get()).exists;

@@ -375,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     getDoctorsBySpeciality('cardiologist');
                   }),
-                  CategoryButton(AssetImage("assets/images/pills.png"), () {
+                  CategoryButton(AssetImage("assets/images/lab.png"), () {
                     setState(() {
                       isLabsSelected = true;
                     });
@@ -464,28 +464,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15)),
                                   color: Color.fromRGBO(81, 168, 255, 60),
-                                  child: Center(
-                                    child: ListTile(
-                                      leading: const Icon(
+                                  child: ListTile(
+                                    leading: Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: const Icon(
                                           CupertinoIcons.lab_flask_solid),
-                                      title: Text(lab.name),
-                                      subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${lab.vicinity} ',
-                                              maxLines: 2,
-                                            ),
-                                            Text(
-                                                '${distance.toStringAsFixed(2)} km away'),
-                                          ]),
-                                      trailing: IconButton(
-                                        onPressed: () {
-                                          _openGoogleMaps(lab);
-                                        },
-                                        icon: Icon(Icons.directions),
-                                      ),
+                                    ),
+                                    title: Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: Text(lab.name),
+                                    ),
+                                    subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${lab.vicinity} ',
+                                            maxLines: 1,
+                                          ),
+                                          Text(
+                                              '${distance.toStringAsFixed(2)} km away'),
+                                        ]),
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        _openGoogleMaps(lab);
+                                      },
+                                      icon: Icon(Icons.directions),
                                     ),
                                   ),
                                 ),

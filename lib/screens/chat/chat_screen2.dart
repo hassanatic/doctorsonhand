@@ -3,6 +3,8 @@ import 'package:doctors_on_hand/models/DocorModel.dart';
 import 'package:doctors_on_hand/screens/chat/ChatUserCard.dart';
 import 'package:flutter/material.dart';
 
+import '../../apis/apis.dart';
+
 class ChatHomeScreen extends StatefulWidget {
   const ChatHomeScreen({super.key});
 
@@ -19,8 +21,10 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
       home: Scaffold(
         appBar: AppBar(),
         body: StreamBuilder<QuerySnapshot>(
-            stream:
-                FirebaseFirestore.instance.collection('doctors').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('doctors')
+                .where('id', isNotEqualTo: APIs.user.uid)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(

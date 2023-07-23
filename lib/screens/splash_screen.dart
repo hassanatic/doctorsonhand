@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 
 import '../utils/color_utils.dart';
 import 'doctor_main_screen.dart';
@@ -204,6 +201,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Text(
               "Doctors On Hands",
               style: TextStyle(
+                  decoration: TextDecoration.none,
                   color: Colors.white,
                   fontSize: 25,
                   fontWeight: FontWeight.bold),
