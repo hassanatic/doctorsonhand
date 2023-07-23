@@ -6,6 +6,7 @@ import 'package:doctors_on_hand/screens/splash_screen.dart';
 import 'package:doctors_on_hand/utils/color_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/laboratory.dart';
 import 'doctor_detail_screen.dart';
@@ -18,6 +19,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  void _openGoogleMaps(Laboratory lab) async {
+    final latitude = lab.latitude;
+    final longitude = lab.longitude;
+    final url =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   List<Widget> dentist_list = [];
   List<Widget> gyno_list = [];
   List<Widget> cardiologist_list = [];
@@ -127,6 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
           // Access all fields in the document
+
           String docName = data['name'];
           String bio = data['bio'];
           String speciality = data['speciality'];
@@ -149,18 +164,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
-                            id: id,
-                            doctorName: docName,
-                            speciality: speciality,
-                            bio: bio,
-                            ratings: 4.0,
-                            profileImage: "assets/images/doctor1.png",
-                            otherSpecialities: other_spc)));
+                              id: id,
+                              doctorName: docName,
+                              speciality: speciality,
+                              bio: bio,
+                              ratings: 4.0,
+                              profileImage: "assets/images/doctor1.png",
+                              otherSpecialities: other_spc,
+                              locaion: location,
+                            )));
               },
               location: location,
             ));
           } else if (spc == "gynocologist") {
             gyno_list.add(DoctorsCard(
+              location: location,
               doctorName: docName,
               speciality: speciality,
               profileImage: AssetImage(
@@ -171,15 +189,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
-                            id: id,
-                            doctorName: docName,
-                            speciality: speciality,
-                            bio: bio,
-                            ratings: 4.0,
-                            profileImage: "assets/images/doctor1.png",
-                            otherSpecialities: other_spc)));
+                              id: id,
+                              doctorName: docName,
+                              speciality: speciality,
+                              bio: bio,
+                              ratings: 4.0,
+                              profileImage: "assets/images/doctor1.png",
+                              otherSpecialities: other_spc,
+                              locaion: location,
+                            )));
               },
-              location: location,
             ));
           }
 
@@ -195,13 +214,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
-                            id: id,
-                            doctorName: docName,
-                            speciality: speciality,
-                            bio: bio,
-                            ratings: 2.0,
-                            profileImage: "assets/images/doctor1.png",
-                            otherSpecialities: other_spc)));
+                              id: id,
+                              doctorName: docName,
+                              speciality: speciality,
+                              bio: bio,
+                              ratings: 2.0,
+                              profileImage: "assets/images/doctor1.png",
+                              otherSpecialities: other_spc,
+                              locaion: location,
+                            )));
               },
               location: location,
             ));
@@ -460,7 +481,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 '${distance.toStringAsFixed(2)} km away'),
                                           ]),
                                       trailing: IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          _openGoogleMaps(lab);
+                                        },
                                         icon: Icon(Icons.directions),
                                       ),
                                     ),
