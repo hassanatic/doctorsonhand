@@ -12,16 +12,17 @@ class DoctorDetailsScreen extends StatefulWidget {
   final double ratings;
   final String profileImage;
   final List<String> otherSpecialities;
+  final GeoPoint locaion;
 
-  DoctorDetailsScreen({
-    required this.doctorName,
-    required this.speciality,
-    required this.bio,
-    required this.ratings,
-    required this.profileImage,
-    required this.otherSpecialities,
-    required this.id,
-  });
+  DoctorDetailsScreen(
+      {required this.doctorName,
+      required this.speciality,
+      required this.bio,
+      required this.ratings,
+      required this.profileImage,
+      required this.otherSpecialities,
+      required this.id,
+      required this.locaion});
 
   @override
   State<DoctorDetailsScreen> createState() => _DoctorDetailsScreenState();
@@ -280,6 +281,30 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
               ),
             ),
             const SizedBox(height: 35.0),
+            ElevatedButton(
+                onPressed: () {
+                  //TODO: ithy directions wala method la de
+
+                  final latitude = widget.locaion.latitude;
+                  final longitude = widget.locaion.longitude;
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(81, 168, 255, 60),
+                  shape: const StadiumBorder(),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 18, bottom: 18),
+                  child: Center(
+                    child: Text(
+                      'Get Directions',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )),
+            const SizedBox(height: 15.0),
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: ElevatedButton(

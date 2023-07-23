@@ -59,4 +59,22 @@ class DoctorModel {
         "reg_code": regCode,
         "location": location,
       };
+
+  // Factory method to create a Doctor object from a Firestore DocumentSnapshot
+  factory DoctorModel.fromSnapshot(DocumentSnapshot snapshot) {
+    return DoctorModel(
+      id: snapshot.id,
+      name: snapshot['name'] as String,
+      speciality: snapshot['speciality'] as String,
+      bio: snapshot['bio'],
+      cnic: snapshot['cnic'],
+      email: snapshot['email'],
+      image: '',
+      pushToken: snapshot['push_token'],
+      otherSpecialities: [],
+      regCode: '',
+      location: snapshot['location'],
+      // Initialize other properties as needed
+    );
+  }
 }

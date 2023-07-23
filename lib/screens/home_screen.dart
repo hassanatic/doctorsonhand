@@ -130,6 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
           String docName = data['name'];
           String bio = data['bio'];
           String speciality = data['speciality'];
+          GeoPoint location = data['location'];
+          String id = data['id'];
           //  List<String> other_spc = data['other_specialities'];
           List<dynamic> firestoreList = data['other_specialities'];
           List<String> other_spc =
@@ -147,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
+                            id: id,
                             doctorName: docName,
                             speciality: speciality,
                             bio: bio,
@@ -154,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             profileImage: "assets/images/doctor1.png",
                             otherSpecialities: other_spc)));
               },
+              location: location,
             ));
           } else if (spc == "gynocologist") {
             gyno_list.add(DoctorsCard(
@@ -167,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
+                            id: id,
                             doctorName: docName,
                             speciality: speciality,
                             bio: bio,
@@ -174,6 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             profileImage: "assets/images/doctor1.png",
                             otherSpecialities: other_spc)));
               },
+              location: location,
             ));
           }
 
@@ -189,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DoctorDetailsScreen(
+                            id: id,
                             doctorName: docName,
                             speciality: speciality,
                             bio: bio,
@@ -196,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             profileImage: "assets/images/doctor1.png",
                             otherSpecialities: other_spc)));
               },
+              location: location,
             ));
           }
 
@@ -426,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 lab.latitude,
                                 lab.longitude);
                             return SizedBox(
-                              height: 100,
+                              height: 110,
                               child: Padding(
                                 padding:
                                     const EdgeInsets.only(left: 8, right: 8),
@@ -440,8 +448,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       leading: const Icon(
                                           CupertinoIcons.lab_flask_solid),
                                       title: Text(lab.name),
-                                      subtitle: Text(
-                                          '${lab.vicinity} \n ${distance.toStringAsFixed(2)} km away'),
+                                      subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${lab.vicinity} ',
+                                              maxLines: 2,
+                                            ),
+                                            Text(
+                                                '${distance.toStringAsFixed(2)} km away'),
+                                          ]),
                                       trailing: IconButton(
                                         onPressed: () {},
                                         icon: Icon(Icons.directions),
@@ -469,12 +486,14 @@ class DoctorsCard extends StatelessWidget {
   final String speciality;
   final ImageProvider profileImage;
   final Function(BuildContext) onPressed;
+  final GeoPoint location;
 
   const DoctorsCard({
     required this.doctorName,
     required this.speciality,
     required this.profileImage,
     required this.onPressed,
+    required this.location,
   });
 
   @override
@@ -522,6 +541,16 @@ class DoctorsCard extends StatelessWidget {
                   ),
                   Text(
                     speciality,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.75),
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.32,
+                    ),
+                  ),
+                  Text(
+                    '${location.latitude} - ${location.longitude}',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.75),
                       fontSize: 16,
