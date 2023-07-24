@@ -22,17 +22,16 @@ class ChatMessage {
   }
 }
 
-
 class ChatScreen extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   TextEditingController _messageController = TextEditingController();
 
   void _sendMessage() async {
+    print('a');
     final content = _messageController.text.trim();
     _messageController.text = '';
     if (content.isEmpty) return;
@@ -48,9 +47,9 @@ class _ChatScreenState extends State<ChatScreen> {
       timestamp: Timestamp.now(),
     );
 
-    await FirebaseFirestore.instance.collection('messages').add(message.toJson());
-
-
+    await FirebaseFirestore.instance
+        .collection('messages')
+        .add(message.toJson());
   }
 
   Widget _buildMessageComposer() {
@@ -65,7 +64,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 controller: _messageController,
                 decoration: InputDecoration(
                   hintText: 'Type your message...',
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide.none,
@@ -73,7 +73,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   filled: true,
                   fillColor: Colors.grey[300],
                 ),
-
                 onSubmitted: (_) => _sendMessage(),
               ),
             ),
@@ -116,7 +115,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
 
                   final messages = snapshot.data?.docs;
-                  final messageList = messages as List<DocumentSnapshot<Map<String, dynamic>>>?;
+                  final messageList =
+                      messages as List<DocumentSnapshot<Map<String, dynamic>>>?;
                   return ListView.builder(
                     reverse: true,
                     itemCount: messageList?.length ?? 0,
@@ -126,28 +126,38 @@ class _ChatScreenState extends State<ChatScreen> {
                       final sender = message?['sender'] as String?;
 
                       // Determine if the message is sent by the current user or received from another user
-                      final isSentMessage = sender == FirebaseAuth.instance.currentUser?.email;
+                      final isSentMessage =
+                          sender == FirebaseAuth.instance.currentUser?.email;
                       print("$isSentMessage");
 
                       // Determine the alignment for the ListTile based on the message sender
-                      final alignment = isSentMessage ? Alignment.centerRight : Alignment.centerLeft;
-
+                      final alignment = isSentMessage
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft;
 
                       return Align(
-                        alignment: isSentMessage ? Alignment.centerRight : Alignment.centerLeft,
+                        alignment: isSentMessage
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
                         child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          margin: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
                           decoration: BoxDecoration(
-                            color: isSentMessage ? Colors.blueAccent : Colors.grey[300],
+                            color: isSentMessage
+                                ? Colors.blueAccent
+                                : Colors.grey[300],
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(content ?? '', style: TextStyle(color: Colors.white)),
+                              Text(content ?? '',
+                                  style: TextStyle(color: Colors.white)),
                               SizedBox(height: 4),
-                              Text(sender ?? '', style: TextStyle(fontSize: 12.0)),
+                              Text(sender ?? '',
+                                  style: TextStyle(fontSize: 12.0)),
                             ],
                           ),
                         ),
@@ -163,5 +173,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
 }

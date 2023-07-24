@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'chat/ChatUserCard.dart';
+
 class DoctorDetailsScreen extends StatefulWidget {
   final String doctorName;
   final String id;
@@ -15,15 +17,14 @@ class DoctorDetailsScreen extends StatefulWidget {
   final List<String> otherSpecialities;
   final GeoPoint locaion;
 
-  DoctorDetailsScreen(
-      {required this.doctorName,
-      required this.speciality,
-      required this.bio,
-      required this.ratings,
-      required this.profileImage,
-      required this.otherSpecialities,
-      required this.id,
-      required this.locaion});
+  DoctorDetailsScreen({required this.doctorName,
+    required this.speciality,
+    required this.bio,
+    required this.ratings,
+    required this.profileImage,
+    required this.otherSpecialities,
+    required this.id,
+    required this.locaion});
 
   @override
   State<DoctorDetailsScreen> createState() => _DoctorDetailsScreenState();
@@ -109,7 +110,9 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
         return AlertDialog(
           title: const Text('Appointment Confirmation'),
           content: Text(
-            'Your appointment with ${widget.doctorName} on ${DateFormat('MMM d, yyyy').format(selectedDate)} at $timeSlot has been booked.',
+            'Your appointment with ${widget.doctorName} on ${DateFormat(
+                'MMM d, yyyy').format(
+                selectedDate)} at $timeSlot has been booked.',
           ),
           actions: [
             TextButton(
@@ -137,6 +140,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
                   width: 100.0,
@@ -187,6 +191,15 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                     ),
                   ],
                 ),
+                SizedBox(
+                  width: 50,
+                ),
+                IconButton(
+                  onPressed: () {
+                    startChat(widget.id);
+                  },
+                  icon: Icon(Icons.chat),
+                )
               ],
             ),
             const SizedBox(height: 16.0),
@@ -321,7 +334,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
               child: ElevatedButton(
                   onPressed: () async {
                     String appointmentDate =
-                        DateFormat('MMM d, yyyy').format(selectedDate);
+                    DateFormat('MMM d, yyyy').format(selectedDate);
 
                     DateFormat format = DateFormat('MMM dd, yyyy hh:mm a');
                     String combineDateTime = '$appointmentDate $timeSlot';
@@ -332,8 +345,8 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                     appointment = Appointment(
                         doctorId: widget.id,
                         patientName:
-                            FirebaseAuth.instance.currentUser!.displayName ??
-                                '',
+                        FirebaseAuth.instance.currentUser!.displayName ??
+                            '',
                         date: Timestamp.fromDate(appointmentTime));
 
                     await bookAppointment(appointment, widget.id);
@@ -360,5 +373,11 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
         ),
       ),
     );
+  }
+
+  List<ChatUserCard> chatList = [];
+
+  void startChat(String id) {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
   }
 }

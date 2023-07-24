@@ -19,6 +19,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String picName = "";
   String imageUrl = '';
 
+
+
+  String? pickedImage;
+
+
   File? _selectedImage;
 
   Future<void> _pickImage() async {
@@ -40,7 +45,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     try {
-      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final fileName = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
       picName = fileName;
       setState(() async {
         imageUrl = await getImageUrl();
@@ -57,6 +65,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('Error uploading image: $e');
     }
   }
+
+
+
+
 
   Future<String> getImageUrl() async {
     final storageReference =
@@ -86,6 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+
+
+
+
   @override
   String? username = APIs.auth.currentUser?.displayName;
   String? email = APIs.auth.currentUser?.email;
@@ -94,7 +110,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         Container(
-          height: MediaQuery.of(context).size.height / 2.5,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height / 2.5,
           width: double.infinity,
           decoration: const BoxDecoration(
             color: Color.fromRGBO(81, 168, 255, 60),
@@ -117,9 +136,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 120,
                       child: CircleAvatar(
                         radius: 100,
+
                         backgroundImage: imageUrl != ''
                             ? Image.network('${imageUrl}.jpg').image
                             : AssetImage("assets/images/person.jpeg"),
+
+                        backgroundImage: imageUrl != '' ? Image
+                            .network('${imageUrl}.jpg')
+                            .image : AssetImage("assets/images/person.jpeg"),
+
                       ),
                     ),
                     Positioned(
@@ -296,15 +321,15 @@ class Profile_Menu extends StatelessWidget {
       ),
       trailing: endicon
           ? Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: Colors.cyan.withOpacity(0.2),
-              ),
-              child: const Icon(Icons.arrow_forward_ios_outlined,
-                  color: Colors.blueGrey),
-            )
+        width: 28,
+        height: 28,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: Colors.cyan.withOpacity(0.2),
+        ),
+        child: const Icon(Icons.arrow_forward_ios_outlined,
+            color: Colors.blueGrey),
+      )
           : null,
     );
   }
