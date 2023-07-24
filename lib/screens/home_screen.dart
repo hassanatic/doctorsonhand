@@ -88,7 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  late bool _isLabLoading;
+  late bool _isLoading;
   Future<void> _fetchLabs() async {
+    setState(() {
+      _isLabLoading = true;
+    });
     final api = Api('AIzaSyDoFoXFgBBpQRyTcIOCjfkKvjEpGgTjacc');
     final labsData = await api.fetchNearbyLaboratories(
         current_location_lat, current_location_long);
@@ -101,6 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 lab['geometry']['location']['lng'],
               ))
           .toList();
+    });
+    setState(() {
+      _isLabLoading = false;
     });
   }
 
@@ -125,6 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void getDoctorsBySpeciality(String speciality) async {
+    setState(() {
+      _isLoading = true;
+    });
     String spc = speciality;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference collectionReference = firestore.collection('doctors');
@@ -252,6 +263,9 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print('Error retrieving documents: $e');
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   String? username = APIs.auth.currentUser?.displayName;
@@ -428,76 +442,93 @@ class _HomeScreenState extends State<HomeScreen> {
                         )),
             ),
             isLabsSelected == false
-                ? Expanded(
-                    child: default_doc_list != []
-                        ? SingleChildScrollView(
-                            child: Padding(
-                                padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
-                                child: Column(
-                                  children: default_doc_list,
-                                )),
-                          )
-                        : Text(
-                            'No doctors found',
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 24),
-                          ),
-                  )
-                : labs != null
-                    ? Expanded(
-                        child: ListView.builder(
-                          itemCount: labs.length,
-                          itemBuilder: (context, index) {
-                            final lab = labs[index];
-                            final distance = calculateDistance(
-                                current_location_lat,
-                                current_location_long,
-                                lab.latitude,
-                                lab.longitude);
-                            return SizedBox(
-                              height: 110,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, right: 8),
-                                child: Card(
-                                  elevation: 3,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  color: Color.fromRGBO(81, 168, 255, 60),
-                                  child: ListTile(
-                                    leading: Padding(
-                                      padding: const EdgeInsets.only(top: 20),
-                                      child: const Icon(
-                                          CupertinoIcons.lab_flask_solid),
-                                    ),
-                                    title: Padding(
-                                      padding: const EdgeInsets.only(top: 20),
-                                      child: Text(lab.name),
-                                    ),
-                                    subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '${lab.vicinity} ',
-                                            maxLines: 1,
-                                          ),
-                                          Text(
-                                              '${distance.toStringAsFixed(2)} km away'),
-                                        ]),
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        _openGoogleMaps(lab);
-                                      },
-                                      icon: Icon(Icons.directions),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                ? _isLoading
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 100),
+                          child: CircularProgressIndicator(),
                         ),
                       )
+                    : Expanded(
+                        child: default_doc_list != []
+                            ? SingleChildScrollView(
+                                child: Padding(
+                                    padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
+                                    child: Column(
+                                      children: default_doc_list,
+                                    )),
+                              )
+                            : Text(
+                                'No doctors found',
+                                style: TextStyle(
+                                    color: Colors.black54, fontSize: 24),
+                              ),
+                      )
+                : labs != null
+                    ? _isLabLoading
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 100),
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: labs.length,
+                              itemBuilder: (context, index) {
+                                final lab = labs[index];
+                                final distance = calculateDistance(
+                                    current_location_lat,
+                                    current_location_long,
+                                    lab.latitude,
+                                    lab.longitude);
+                                return SizedBox(
+                                  height: 110,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8, right: 8),
+                                    child: Card(
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      color: Color.fromRGBO(81, 168, 255, 60),
+                                      child: ListTile(
+                                        leading: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: const Icon(
+                                              CupertinoIcons.lab_flask_solid),
+                                        ),
+                                        title: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: Text(lab.name),
+                                        ),
+                                        subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${lab.vicinity} ',
+                                                maxLines: 1,
+                                              ),
+                                              Text(
+                                                  '${distance.toStringAsFixed(2)} km away'),
+                                            ]),
+                                        trailing: IconButton(
+                                          onPressed: () {
+                                            _openGoogleMaps(lab);
+                                          },
+                                          icon: Icon(Icons.directions),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
                     : Center(
                         child: CircularProgressIndicator(),
                       ),

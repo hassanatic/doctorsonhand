@@ -14,17 +14,15 @@ final ThemeData lightTheme = ThemeData(
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cupertinoOverrideTheme: CupertinoThemeData.raw(Brightness.dark, Colors.black,
-      Colors.white, textThemeData, Colors.black, Colors.black),
+      Colors.white, textThemeData, Colors.black, Colors.black, true),
 );
 
 final ThemeData data = ThemeData(
-  primaryColor: const Color(0xFFF44336),
-  // custom primary color
+  primaryColor: const Color(0xFFF44336), // custom primary color
   colorScheme: ColorScheme.fromSwatch().copyWith(
     secondary: const Color(0xFFF44336),
     primary: const Color(0xFFF44336),
-  ),
-  // custom accent color
+  ), // custom accent color
   visualDensity: VisualDensity.adaptivePlatformDensity,
   buttonTheme: ButtonThemeData(
     textTheme: ButtonTextTheme.primary,

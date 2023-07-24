@@ -72,8 +72,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void _loadMarkersFromFirestore() {
-    _markersRef.get().then((querySnapshot) {
+  void _loadMarkersFromFirestore() async {
+    await _markersRef.get().then((querySnapshot) {
       querySnapshot.docs.forEach((documentSnapshot) {
         double latitude = documentSnapshot['latitude'];
         double longitude = documentSnapshot['longitude'];

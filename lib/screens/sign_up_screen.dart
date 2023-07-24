@@ -12,8 +12,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/color_utils.dart';
 import 'main_screen.dart';
 
-Set<Marker> markers = Set<Marker>();
-
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -24,10 +22,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late CollectionReference _markersRef;
+  BitmapDescriptor marker = BitmapDescriptor.defaultMarker;
 
-  void _addMarker(LatLng latLng) {
+  void addCustomMarker() {
+    BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(),
+      'assets/images/doctormarker.png',
+    ).then((icon) {
+      setState(() {
+        marker = icon;
+      });
+    });
+  }
+
+  void _addMarker(LatLng latLng) async {
+    final name = await FirebaseAuth.instance.currentUser!.displayName;
+
     Marker newMarker = Marker(
-      // icon: ,
+      icon: marker,
+      infoWindow: InfoWindow(
+        title: name,
+      ),
       markerId: MarkerId(latLng.toString()),
       position: latLng,
     );
@@ -210,6 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
 
     _markersRef = _firestore.collection('markers');
+    addCustomMarker();
   }
 
   Widget build(BuildContext context) {

@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../apis/apis.dart';
+import 'splash_screen.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -17,7 +18,28 @@ class _MapPageState extends State<MapPage> {
   CameraPosition _initialCameraPosition =
       CameraPosition(target: LatLng(32.640700, 74.166700), zoom: 12);
   late GoogleMapController _googleMapController;
-  Set<Marker> _markers = {};
+  Set<Marker> _hosMarkers = {};
+
+  Set<Marker> all_markers = {};
+
+  Future<void> getHospitals() async {
+    await Future.delayed(Duration(seconds: 3));
+    await _fetchNearbyHospitals();
+
+    LatLng latLng = LatLng(currentPosition.latitude, currentPosition.longitude);
+
+    markers.add(Marker(
+      markerId: MarkerId(latLng.toString()),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      infoWindow: InfoWindow(title: "Your Location"),
+    ));
+    markers.addAll(_hosMarkers);
+    all_markers.addAll(_hosMarkers);
+    all_markers.addAll(markers);
+    print(markers);
+    print(_hosMarkers);
+    print(all_markers);
+  }
 
   @override
   void dispose() {
@@ -30,8 +52,8 @@ class _MapPageState extends State<MapPage> {
     super.initState();
 
     _getCurrentLocation();
-    _fetchNearbyHospitals();
     addCustomMarker();
+    getHospitals();
   }
 
   bool _isLoading = true;
@@ -40,7 +62,7 @@ class _MapPageState extends State<MapPage> {
 
   void addCustomMarker() {
     BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(),
+      const ImageConfiguration(),
       'assets/images/marker4.png',
     ).then((icon) {
       setState(() {
@@ -89,6 +111,7 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
+  late Position currentPosition;
   Future<void> _getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -96,6 +119,8 @@ class _MapPageState extends State<MapPage> {
       );
 
       setState(() {
+        currentPosition = position;
+
         // Update _originPosition and _initialCameraPosition with the current location
         _originPosition = LatLng(position.latitude, position.longitude);
         _initialCameraPosition = CameraPosition(
@@ -120,7 +145,7 @@ class _MapPageState extends State<MapPage> {
               _originPosition.latitude, _originPosition.longitude);
 
       setState(() {
-        _markers.clear();
+        _hosMarkers.clear();
         for (var hospital in nearbyHospitals) {
           final LatLng latLng = LatLng(
             hospital['geometry']['location']['lat'],
@@ -135,7 +160,7 @@ class _MapPageState extends State<MapPage> {
               _showDirectionsDialog(latLng.latitude, latLng.longitude);
             },
           );
-          _markers.add(marker);
+          _hosMarkers.add(marker);
         }
       });
     } catch (e) {
@@ -157,7 +182,7 @@ class _MapPageState extends State<MapPage> {
         myLocationButtonEnabled: false,
         initialCameraPosition: _initialCameraPosition,
         onMapCreated: (controller) => _googleMapController = controller,
-        markers: _markers,
+        markers: markers,
       ),
     );
   }

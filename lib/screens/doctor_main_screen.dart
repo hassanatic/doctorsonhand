@@ -1,10 +1,10 @@
-import 'package:doctors_on_hand/screens/doctor_home_screen.dart';
 import 'package:doctors_on_hand/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 import 'chat_screen.dart';
+import 'doctor_home_screen.dart';
 
 class DoctorMainScreen extends StatefulWidget {
   const DoctorMainScreen({Key? key}) : super(key: key);
@@ -28,6 +28,7 @@ class _DoctorMainScreenState extends State<DoctorMainScreen> {
     ChatScreen(),
   ];
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: screens[index],

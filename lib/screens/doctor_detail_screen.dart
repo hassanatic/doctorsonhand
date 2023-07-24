@@ -17,14 +17,15 @@ class DoctorDetailsScreen extends StatefulWidget {
   final List<String> otherSpecialities;
   final GeoPoint locaion;
 
-  DoctorDetailsScreen({required this.doctorName,
-    required this.speciality,
-    required this.bio,
-    required this.ratings,
-    required this.profileImage,
-    required this.otherSpecialities,
-    required this.id,
-    required this.locaion});
+  DoctorDetailsScreen(
+      {required this.doctorName,
+      required this.speciality,
+      required this.bio,
+      required this.ratings,
+      required this.profileImage,
+      required this.otherSpecialities,
+      required this.id,
+      required this.locaion});
 
   @override
   State<DoctorDetailsScreen> createState() => _DoctorDetailsScreenState();
@@ -102,6 +103,8 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
     }
   }
 
+  late bool isLoading;
+
   void _selectTimeSlot(String timeSlot) {
     // Handle time slot selection
     showDialog(
@@ -110,9 +113,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
         return AlertDialog(
           title: const Text('Appointment Confirmation'),
           content: Text(
-            'Your appointment with ${widget.doctorName} on ${DateFormat(
-                'MMM d, yyyy').format(
-                selectedDate)} at $timeSlot has been booked.',
+            'Your appointment with ${widget.doctorName} on ${DateFormat('MMM d, yyyy').format(selectedDate)} at $timeSlot has been booked.',
           ),
           actions: [
             TextButton(
@@ -192,7 +193,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                   ],
                 ),
                 SizedBox(
-                  width: 50,
+                  width: 30,
                 ),
                 IconButton(
                   onPressed: () {
@@ -333,8 +334,12 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
               padding: const EdgeInsets.only(bottom: 20),
               child: ElevatedButton(
                   onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+
                     String appointmentDate =
-                    DateFormat('MMM d, yyyy').format(selectedDate);
+                        DateFormat('MMM d, yyyy').format(selectedDate);
 
                     DateFormat format = DateFormat('MMM dd, yyyy hh:mm a');
                     String combineDateTime = '$appointmentDate $timeSlot';
@@ -345,12 +350,18 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                     appointment = Appointment(
                         doctorId: widget.id,
                         patientName:
-                        FirebaseAuth.instance.currentUser!.displayName ??
-                            '',
+                            FirebaseAuth.instance.currentUser!.displayName ??
+                                '',
                         date: Timestamp.fromDate(appointmentTime));
 
                     await bookAppointment(appointment, widget.id);
-                    _selectTimeSlot(timeSlot);
+
+                    setState(() {
+                      isLoading = false;
+                    });
+                    !isLoading
+                        ? _selectTimeSlot(timeSlot)
+                        : Center(child: CircularProgressIndicator());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(81, 168, 255, 60),

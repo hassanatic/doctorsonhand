@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctors_on_hand/apis/apis.dart';
-import 'package:doctors_on_hand/screens/chat/chat_screen2.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
+import 'package:doctors_on_hand/screens/splash_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -15,72 +18,79 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late Position newPosition;
   // Function to upload image to Firebase Storage
-  String picName = "";
-  String imageUrl = '';
-
-
-
-  String? pickedImage;
-
-
-  File? _selectedImage;
-
-  Future<void> _pickImage() async {
+  Future<String?> uploadImageToFirebase() async {
+    final user = FirebaseAuth.instance.currentUser;
     final picker = ImagePicker();
+
+    // Pick an image from the gallery
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
+      // Create a reference to the user's profile image in Firebase Storage
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_images/${user!.uid}.jpg');
+
+      // Upload the image file to Firebase Storage
+      final uploadTask = storageRef.putFile(File(pickedImage.path));
+
+      // Get the download URL of the uploaded image
+      final snapshot = await uploadTask.whenComplete(() {});
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      // Return the download URL
+      return downloadUrl;
     }
 
-    _uploadImage();
+    return null;
   }
 
-  Future<void> _uploadImage() async {
-    if (_selectedImage == null) {
-      return;
+  final picker = ImagePicker();
+
+  Future<File?> pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      return File(pickedFile.path);
     }
 
+    return null;
+  }
+
+  Future<String?> uploadImage(File imageFile) async {
     try {
-      final fileName = DateTime
-          .now()
-          .millisecondsSinceEpoch
-          .toString();
-      picName = fileName;
-      setState(() async {
-        imageUrl = await getImageUrl();
-      });
-      print(picName);
-      print(imageUrl);
-
-      final reference =
-          FirebaseStorage.instance.ref().child('images').child('$fileName.jpg');
-
-      await reference.putFile(_selectedImage!);
-      print('Image uploaded successfully.');
+      final storage = FirebaseStorage.instance;
+      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final Reference reference =
+          storage.ref().child('profile_pictures/$fileName');
+      final UploadTask uploadTask = reference.putFile(imageFile);
+      final TaskSnapshot storageTaskSnapshot =
+          await uploadTask.whenComplete(() => null);
+      final String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+      return downloadUrl;
     } catch (e) {
       print('Error uploading image: $e');
+      return null;
     }
   }
 
+  late File _imageFile;
 
+  Future<void> _selectAndUploadImage() async {
+    final pickedImage = await pickImage();
+    if (pickedImage != null) {
+      setState(() {
+        _imageFile = pickedImage;
+      });
 
-
-
-  Future<String> getImageUrl() async {
-    final storageReference =
-        FirebaseStorage.instance.ref().child('images').child('${picName}');
-
-    try {
-      final imageUrl = await storageReference.getDownloadURL();
-      return imageUrl;
-    } catch (e) {
-      // Handle error, e.g., if the image doesn't exist in Firebase Storage
-      print('Error getting image URL: $e');
-      return '';
+      final downloadUrl = await uploadImage(_imageFile);
+      if (downloadUrl != null) {
+        // Save the download URL to the user's profile or database
+        // e.g., Firestore, Realtime Database, etc.
+        // Your code here...
+      }
     }
   }
 
@@ -98,11 +108,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-
-
-
-
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   String? username = APIs.auth.currentUser?.displayName;
   String? email = APIs.auth.currentUser?.email;
 
@@ -110,10 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         Container(
-          height: MediaQuery
-              .of(context)
-              .size
-              .height / 2.5,
+          height: MediaQuery.of(context).size.height / 2.5,
           width: double.infinity,
           decoration: const BoxDecoration(
             color: Color.fromRGBO(81, 168, 255, 60),
@@ -128,23 +136,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    _pickImage();
+                    _selectAndUploadImage();
                   },
-                  child: Stack(children: [
+                  child: const Stack(children: [
                     SizedBox(
                       height: 120,
                       width: 120,
                       child: CircleAvatar(
                         radius: 100,
-
-                        backgroundImage: imageUrl != ''
-                            ? Image.network('${imageUrl}.jpg').image
-                            : AssetImage("assets/images/person.jpeg"),
-
-                        backgroundImage: imageUrl != '' ? Image
-                            .network('${imageUrl}.jpg')
-                            .image : AssetImage("assets/images/person.jpeg"),
-
+                        backgroundImage:
+                            AssetImage('assets/images/doctor1.png'),
                       ),
                     ),
                     Positioned(
@@ -179,23 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 170,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      updateProfile();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      side: BorderSide.none,
-                      backgroundColor: Colors.greenAccent,
-                    ),
-                    child: Text(
-                      'Edit Profile',
-                      style: TextStyle(
-                        color: Colors.black.withOpacity(0.6),
-                      ),
-                    ),
-                  ),
-                )
+                ),
               ],
             ),
           ),
@@ -206,21 +191,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               Profile_Menu(
-                title: 'Location',
+                title: 'Update Location',
                 icon: Icons.location_city,
-                onPress: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChatHomeScreen()));
+                onPress: () async {
+                  try {
+                    await _getCurrentLocation();
+                    updateLocation(newPosition);
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Location Updated'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    print('error $e');
+                  }
                 },
               ),
               const Divider(),
-              Profile_Menu(
-                title: 'Information',
-                icon: Icons.medical_information,
-                onPress: () {},
-              ),
               Profile_Menu(
                 title: 'Logout',
                 icon: Icons.logout,
@@ -238,6 +237,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateProfile() {}
+
+  void updateLocation(Position position) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    await firestore
+        .collection('doctors')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'location': GeoPoint(current_location_lat, current_location_long)
+    });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      current_location_lat = position.latitude;
+      current_location_long = position.longitude;
+      newPosition = position;
+    } catch (e) {
+      print("Error getting location: $e");
+
+      // Handle any error that occurred while obtaining the location.
+    }
+  }
 }
 
 // Widget updateProfilePopup() {
@@ -321,15 +347,15 @@ class Profile_Menu extends StatelessWidget {
       ),
       trailing: endicon
           ? Container(
-        width: 28,
-        height: 28,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: Colors.cyan.withOpacity(0.2),
-        ),
-        child: const Icon(Icons.arrow_forward_ios_outlined,
-            color: Colors.blueGrey),
-      )
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Colors.cyan.withOpacity(0.2),
+              ),
+              child: const Icon(Icons.arrow_forward_ios_outlined,
+                  color: Colors.blueGrey),
+            )
           : null,
     );
   }

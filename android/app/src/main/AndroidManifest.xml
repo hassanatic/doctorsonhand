@@ -5,8 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 
-   <application
-        android:label="Doctors On Hands"
 
     <application
         android:label="doctors_on_hand"
