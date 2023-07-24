@@ -4,8 +4,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+
+   <application
+        android:label="Doctors On Hands"
+
     <application
         android:label="doctors_on_hand"
+
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

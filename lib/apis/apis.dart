@@ -14,11 +14,29 @@ class APIs {
   // for accessing cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  static late DoctorModel me;
+
   static User get user => auth.currentUser!;
 
   static Future<bool> doctorExists() async {
     return (await firestore.collection('doctors').doc(user.uid).get()).exists;
   }
+
+  // static Future<void> getSelfInfo()async {
+  //   await FirebaseFirestore.instance.collection('doctors').doc(user.uid).get().then((user) async {
+  //     if(user.exists) {
+  //       me = DoctorModel.fromJson(user.data()!);
+  //     }
+  //     else{
+  //      await createDoctor().then((value) => getSelfInfo());
+  //
+  //     }
+  //
+  //
+  //   });
+  //
+  //
+  // }
 
   static Future<bool> userExists() async {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
@@ -112,6 +130,25 @@ class Api {
       }
     } else {
       throw Exception('Failed to fetch nearby laboratories');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchNearbyHospitals(
+      double latitude, double longitude) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=10000&keyword=hospital&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'OK') {
+        return List<Map<String, dynamic>>.from(data['results']);
+      } else {
+        throw Exception('Failed to fetch nearby hospitals');
+      }
+    } else {
+      throw Exception('Failed to fetch nearby hospitals');
     }
   }
 }

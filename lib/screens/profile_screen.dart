@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:doctors_on_hand/apis/apis.dart';
+import 'package:doctors_on_hand/screens/chat/chat_screen2.dart';
 import 'package:doctors_on_hand/screens/login_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String picName = "";
   String imageUrl = '';
 
+
+
   String? pickedImage;
+
 
   File? _selectedImage;
 
@@ -52,10 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print(picName);
       print(imageUrl);
 
-      final reference = FirebaseStorage.instance
-          .ref()
-          .child('images')
-          .child('$fileName.jpg');
+      final reference =
+          FirebaseStorage.instance.ref().child('images').child('$fileName.jpg');
 
       await reference.putFile(_selectedImage!);
       print('Image uploaded successfully.');
@@ -65,11 +67,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
 
+
+
+
   Future<String> getImageUrl() async {
-    final storageReference = FirebaseStorage.instance
-        .ref()
-        .child('images')
-        .child('${picName}');
+    final storageReference =
+        FirebaseStorage.instance.ref().child('images').child('${picName}');
 
     try {
       final imageUrl = await storageReference.getDownloadURL();
@@ -94,6 +97,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       print('Logout error: $e');
     }
   }
+
+
+
 
 
   @override
@@ -129,12 +135,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 120,
                       width: 120,
                       child: CircleAvatar(
-
-
                         radius: 100,
+
+                        backgroundImage: imageUrl != ''
+                            ? Image.network('${imageUrl}.jpg').image
+                            : AssetImage("assets/images/person.jpeg"),
+
                         backgroundImage: imageUrl != '' ? Image
                             .network('${imageUrl}.jpg')
                             .image : AssetImage("assets/images/person.jpeg"),
+
                       ),
                     ),
                     Positioned(
@@ -195,12 +205,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
           child: Column(
             children: [
-
-
               Profile_Menu(
                 title: 'Location',
                 icon: Icons.location_city,
-                onPress: () {},
+                onPress: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChatHomeScreen()));
+                },
               ),
               const Divider(),
               Profile_Menu(
